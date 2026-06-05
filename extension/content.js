@@ -270,7 +270,7 @@
         </div>
         <span class="psw-pill pluto-pill-hide" id="pluto-pill"></span>
       </div>
-      <div class="pluto-panel" id="${PANEL_ID}" style="display:none">
+      <div class="pluto-panel" id="${PANEL_ID}">
         <div class="pp-header">Flagged on this page</div>
         <div class="pp-list" id="pluto-panel-list"></div>
         <div class="pp-footer" id="pluto-panel-footer"></div>
@@ -280,19 +280,10 @@
     el.querySelector("#pluto-wrap").addEventListener("click", () => {
       const panel = document.getElementById(PANEL_ID);
       if (!panel) return;
-      const opening = panel.style.display === "none";
-      panel.style.display = opening ? "block" : "none";
+      const opening = !panel.classList.contains("pp-open");
+      panel.classList.toggle("pp-open", opening);
       if (opening) renderPanel();
     });
-
-    // Close panel on outside click
-    document.addEventListener("click", e => {
-      const widget = document.getElementById(SIDEBAR_ID);
-      if (widget && !widget.contains(e.target)) {
-        const p = document.getElementById(PANEL_ID);
-        if (p) p.style.display = "none";
-      }
-    }, true);
 
     return el;
   }
@@ -314,7 +305,7 @@
       sub.textContent = sessionCount === 1 ? "1 flag this page" : `${sessionCount} flags this page`;
       // Refresh open panel
       const p = document.getElementById(PANEL_ID);
-      if (p && p.style.display !== "none") renderPanel();
+      if (p?.classList.contains("pp-open")) renderPanel();
     } else {
       pill.classList.add("pluto-pill-hide");
       sub.textContent = "Media Intelligence";
@@ -403,26 +394,23 @@
     banner.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
 
     banner.innerHTML = `
-      <div class="pluto-banner-bar"></div>
-      <div class="pluto-banner-icon-wrap">
-        <span class="pluto-banner-cat-icon">${ICONS[account.category] || ""}</span>
-      </div>
-      <div class="pluto-banner-body">
-        <div class="pluto-banner-top">
+      <div class="pluto-banner-content">
+        <div class="pluto-banner-row1">
+          <span class="pluto-banner-cat-icon">${ICONS[account.category] || ""}</span>
           <span class="pluto-banner-name">${account.label || c.label}${account.country ? " " + flagEmoji(account.country) : ""}</span>
           <span class="pluto-banner-cat-chip">${c.label}</span>
           ${account.blocked && settings.blockContent ? '<span class="pluto-banner-blocked-chip">Content hidden</span>' : ""}
         </div>
-        <div class="pluto-banner-detail">${account.detail || ""}</div>
-        ${account.source ? `<div class="pluto-banner-source">Source: ${account.source}</div>` : ""}
+        ${account.detail ? `<div class="pluto-banner-detail">${account.detail}</div>` : ""}
+        ${account.source ? `<div class="pluto-banner-source">${account.source}</div>` : ""}
       </div>
-      <div class="pluto-banner-actions">
-        <button class="pluto-banner-trust" title="Mark as trusted — remove Pluto warnings for this account">
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5L4 8.5L9.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="pluto-banner-btns">
+        <button class="pluto-banner-trust" title="Mark as trusted">
+          <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5L4 8.5L9.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Trust
         </button>
         <button class="pluto-banner-close" aria-label="Dismiss">
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </button>
       </div>
     `;
