@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mediacheck</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      width: 320px;
+      min-height: 400px;
+      background: #fff;
+      color: #111;
+    }
+    header {
+      background: #1d1d1f;
+      color: #fff;
+      padding: 14px 16px 10px;
+    }
+    header h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+    header p  { font-size: 11px; color: #aaa; margin-top: 2px; }
+    section { padding: 12px 14px; border-bottom: 1px solid #eee; }
+    section h2 { font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+
+    /* Category legend */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    .legend-dot {
+      width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
+    }
+
+    /* Add account form */
+    .add-row {
+      display: flex;
+      gap: 6px;
+    }
+    .add-row input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 5px 8px;
+      font-size: 13px;
+      outline: none;
+    }
+    .add-row input:focus { border-color: #555; }
+    .add-row select {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 5px 4px;
+      font-size: 12px;
+    }
+    button {
+      background: #1d1d1f;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    button:hover { background: #333; }
+    #addError { font-size: 11px; color: #c00; margin-top: 4px; min-height: 14px; }
+
+    /* Account list */
+    #accountList { max-height: 200px; overflow-y: auto; }
+    .acc-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 12px;
+      gap: 8px;
+    }
+    .acc-item:last-child { border-bottom: none; }
+    .acc-handle { font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .acc-label {
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .acc-toggle {
+      font-size: 10px;
+      padding: 2px 7px;
+      background: #eee;
+      color: #333;
+    }
+    .acc-toggle:hover { background: #ddd; }
+    .acc-disabled .acc-handle { color: #aaa; text-decoration: line-through; }
+
+    footer {
+      padding: 8px 14px;
+      font-size: 10px;
+      color: #aaa;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Mediacheck</h1>
+    <p>War Summary – Twitter media warnings</p>
+  </header>
+
+  <section>
+    <h2>Categories</h2>
+    <div class="legend-item"><div class="legend-dot" style="background:#e05c00"></div> State-affiliated media</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#c62828"></div> Unverified / misinformation</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1565c0"></div> Satire</div>
+  </section>
+
+  <section>
+    <h2>Add account</h2>
+    <div class="add-row">
+      <input id="handleInput" type="text" placeholder="@username" autocomplete="off" />
+      <select id="catSelect">
+        <option value="state-affiliated">State media</option>
+        <option value="misinformation">Unverified</option>
+        <option value="satire">Satire</option>
+      </select>
+      <button id="addBtn">Add</button>
+    </div>
+    <div id="addError"></div>
+  </section>
+
+  <section>
+    <h2>Flagged accounts</h2>
+    <div id="accountList">Loading…</div>
+  </section>
+
+  <footer>Hover a badge on Twitter to see details.</footer>
+
+  <script src="accounts.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
