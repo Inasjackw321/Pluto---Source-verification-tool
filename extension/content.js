@@ -27,7 +27,10 @@
     "satire":           `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h7a.8.8 0 01.8.8V7a.8.8 0 01-.8.8H6.5L4.5 9.5V7.8H2A.8.8 0 011.2 7V2.8A.8.8 0 012 2Z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/><path d="M3.5 5.5c.3-.6.9-.6 1.4 0 .4.6 1.1.6 1.4 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" fill="none"/></svg>`
   };
 
-  const PLANET_SVG_SM = `<svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="9" cy="9" rx="8.5" ry="2.8" stroke="#a78bfa" stroke-width="1.1" fill="none" transform="rotate(-25 9 9)" opacity="0.55"/><circle cx="9" cy="9" r="5.5" fill="#7c3aed"/><circle cx="7" cy="7" r="2.1" fill="#a78bfa" opacity="0.32"/><path d="M14.2 5.3Q16.5 9 14.2 12.7" stroke="#c4b5fd" stroke-width="1.1" fill="none" stroke-linecap="round" opacity="0.65"/></svg>`;
+  // Magnifying-glass logo — identical paths, 3 rendered sizes
+  const PLUTO_LOGO_SM = `<svg width="16" height="16" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="9" stroke="#a78bfa" stroke-width="2.2" fill="rgba(124,58,237,0.12)"/><line x1="14" y1="9.5" x2="14" y2="18.5" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="9.5" y1="14" x2="18.5" y2="14" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="21" y1="21" x2="29.5" y2="29.5" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/></svg>`;
+  const PLUTO_LOGO_MD = `<svg width="26" height="26" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="9" stroke="#a78bfa" stroke-width="2.2" fill="rgba(124,58,237,0.12)"/><line x1="14" y1="9.5" x2="14" y2="18.5" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="9.5" y1="14" x2="18.5" y2="14" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="21" y1="21" x2="29.5" y2="29.5" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/></svg>`;
+  const PLUTO_LOGO_LG = `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="14" cy="14" r="9" stroke="#a78bfa" stroke-width="2.2" fill="rgba(124,58,237,0.12)"/><line x1="14" y1="9.5" x2="14" y2="18.5" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="9.5" y1="14" x2="18.5" y2="14" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/><line x1="21" y1="21" x2="29.5" y2="29.5" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/></svg>`;
 
   // ── Load ──────────────────────────────────────────────────────────────────────
 
@@ -82,8 +85,11 @@
     ).join("");
   }
 
-  function bumpCount(n = 1) {
+  const pageFlags = new Map(); // handle → account (tracks flags seen this page/session)
+
+  function bumpCount(n = 1, account = null) {
     sessionCount += n;
+    if (account) pageFlags.set(account.handle, account);
     try { chrome.runtime.sendMessage({ type: "PLUTO_COUNT", delta: n }); } catch (_) {}
     updateSidebarCount();
   }
@@ -95,7 +101,7 @@
     const toast = document.createElement("div");
     toast.className = "pluto-toast";
     toast.innerHTML = `
-      <span class="pluto-toast-icon">${PLANET_SVG_SM}</span>
+      <span class="pluto-toast-icon">${PLUTO_LOGO_SM}</span>
       <div class="pluto-toast-text">
         <span class="pluto-toast-main">${msg}</span>
         ${sub ? `<span class="pluto-toast-sub">${sub}</span>` : ""}
@@ -154,7 +160,7 @@
     item.setAttribute("role", "menuitem");
     item.setAttribute("tabindex", "0");
     item.innerHTML = `
-      <span class="pluto-menu-icon">${PLANET_SVG_SM}</span>
+      <span class="pluto-menu-icon">${PLUTO_LOGO_SM}</span>
       <span class="pluto-menu-text">Flag @${handle} with Pluto…</span>
     `;
     item.addEventListener("click", e => {
@@ -223,28 +229,71 @@
   // ── Sidebar widget ─────────────────────────────────────────────────────────────
 
   const SIDEBAR_ID = "pluto-sidebar-widget";
+  const PANEL_ID   = "pluto-sidebar-panel";
 
-  const PLANET_SVG_LG = `<svg width="26" height="26" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="18" cy="18" rx="17" ry="5.5" stroke="#a78bfa" stroke-width="2.2" fill="none" transform="rotate(-28 18 18)" opacity="0.5"/>
-    <circle cx="18" cy="18" r="10.5" fill="url(#pg)"/>
-    <circle cx="14" cy="13" r="4.5" fill="#a78bfa" opacity="0.3"/>
-    <path d="M27.5 11Q31.5 18 27.5 25" stroke="#c4b5fd" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.6"/>
-    <defs><radialGradient id="pg" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="55%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#4c1d95"/></radialGradient></defs>
-  </svg>`;
+  function renderPanel() {
+    const list   = document.getElementById("pluto-panel-list");
+    const footer = document.getElementById("pluto-panel-footer");
+    if (!list) return;
+    list.innerHTML = "";
+    if (pageFlags.size === 0) {
+      list.innerHTML = `<div class="pp-empty">No flagged accounts seen yet</div>`;
+      if (footer) footer.textContent = "";
+      return;
+    }
+    if (footer) footer.textContent = `${pageFlags.size} flagged account${pageFlags.size !== 1 ? "s" : ""} on this page`;
+    for (const [, account] of pageFlags) {
+      const c   = cat(account);
+      const row = document.createElement("div");
+      row.className = "pp-row";
+      row.innerHTML = `
+        <span class="pp-dot" style="background:${c.dotColor}"></span>
+        <span class="pp-handle">@${account.handle}${account.country ? " " + flagEmoji(account.country) : ""}</span>
+        <span class="pp-chip" style="color:${c.color};background:${c.bgColor};border-color:${c.borderColor}">${c.label}</span>
+      `;
+      list.appendChild(row);
+    }
+  }
 
   function makeSidebarWidget() {
     const el = document.createElement("div");
     el.id = SIDEBAR_ID;
     el.innerHTML = `
-      <div class="psw-wrap">
-        <div class="psw-icon">${PLANET_SVG_LG}</div>
+      <div class="psw-wrap" id="pluto-wrap">
+        <div class="psw-icon psw-glow">${PLUTO_LOGO_MD}</div>
         <div class="psw-body">
-          <span class="psw-name">Pluto</span>
+          <div class="psw-name-row">
+            <span class="psw-name">Pluto</span>
+            <span class="psw-beta">BETA</span>
+          </div>
           <span class="psw-sub" id="pluto-sub">Media Intelligence</span>
         </div>
-        <span class="psw-pill" id="pluto-pill"></span>
+        <span class="psw-pill pluto-pill-hide" id="pluto-pill"></span>
+      </div>
+      <div class="pluto-panel" id="${PANEL_ID}" style="display:none">
+        <div class="pp-header">Flagged on this page</div>
+        <div class="pp-list" id="pluto-panel-list"></div>
+        <div class="pp-footer" id="pluto-panel-footer"></div>
       </div>
     `;
+
+    el.querySelector("#pluto-wrap").addEventListener("click", () => {
+      const panel = document.getElementById(PANEL_ID);
+      if (!panel) return;
+      const opening = panel.style.display === "none";
+      panel.style.display = opening ? "block" : "none";
+      if (opening) renderPanel();
+    });
+
+    // Close panel on outside click
+    document.addEventListener("click", e => {
+      const widget = document.getElementById(SIDEBAR_ID);
+      if (widget && !widget.contains(e.target)) {
+        const p = document.getElementById(PANEL_ID);
+        if (p) p.style.display = "none";
+      }
+    }, true);
+
     return el;
   }
 
@@ -263,6 +312,9 @@
         pill.classList.add("pluto-bump");
       }
       sub.textContent = sessionCount === 1 ? "1 flag this page" : `${sessionCount} flags this page`;
+      // Refresh open panel
+      const p = document.getElementById(PANEL_ID);
+      if (p && p.style.display !== "none") renderPanel();
     } else {
       pill.classList.add("pluto-pill-hide");
       sub.textContent = "Media Intelligence";
@@ -291,7 +343,11 @@
     } else {
       sideNav.prepend(widget);
     }
+    updateSidebarCount();
   }
+
+  // Keep widget alive across Twitter's SPA re-renders
+  setInterval(injectSidebarWidget, 1500);
 
   // ── Badge ──────────────────────────────────────────────────────────────────────
 
@@ -360,10 +416,26 @@
         <div class="pluto-banner-detail">${account.detail || ""}</div>
         ${account.source ? `<div class="pluto-banner-source">Source: ${account.source}</div>` : ""}
       </div>
-      <button class="pluto-banner-close" aria-label="Dismiss">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </button>
+      <div class="pluto-banner-actions">
+        <button class="pluto-banner-trust" title="Mark as trusted — remove Pluto warnings for this account">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5L4 8.5L9.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Trust
+        </button>
+        <button class="pluto-banner-close" aria-label="Dismiss">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
     `;
+    banner.querySelector(".pluto-banner-trust").addEventListener("click", () => {
+      chrome.storage.sync.get("trustedHandles", data => {
+        const trusted = data.trustedHandles || [];
+        if (!trusted.includes(account.handle)) trusted.push(account.handle);
+        chrome.storage.sync.set({ trustedHandles: trusted }, () => {
+          showToast(`@${account.handle} marked as trusted`, "Pluto warnings removed for this account");
+          banner.remove();
+        });
+      });
+    });
     banner.querySelector(".pluto-banner-close").addEventListener("click", () => {
       banner.classList.add("pluto-banner-out");
       banner.addEventListener("transitionend", () => banner.remove(), { once: true });
@@ -424,7 +496,7 @@
         const row = link.closest("[dir]") || link.parentElement;
         if (row && !row.querySelector(`.pluto-badge[data-pluto-handle="${handle}"]`)) {
           link.insertAdjacentElement("afterend", makeBadge(account));
-          bumpCount();
+          bumpCount(1, account);
         }
       }
     }
@@ -500,7 +572,7 @@
       else document.querySelector('[data-testid="primaryColumn"]')?.prepend(banner);
     }
 
-    bumpCount();
+    bumpCount(1, account);
   }
 
   // ── Scan ──────────────────────────────────────────────────────────────────────
@@ -527,6 +599,9 @@
     if (location.href === lastUrl) return;
     lastUrl = location.href;
     document.getElementById("pluto-profile-banner")?.remove();
+    pageFlags.clear();
+    sessionCount = 0;
+    updateSidebarCount();
     setTimeout(() => scan(document.body), 900);
   }).observe(document, { subtree: true, childList: true });
 
@@ -544,6 +619,7 @@
         el.style.removeProperty("--phb");
       });
       sessionCount = 0;
+      pageFlags.clear();
       scan(document.body);
     });
   });

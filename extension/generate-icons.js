@@ -8,11 +8,9 @@ const SIZES = [16, 48, 128];
 for (const size of SIZES) {
   const canvas = createCanvas(size, size);
   const ctx = canvas.getContext("2d");
-  const cx = size / 2, cy = size / 2;
-  const r = size * 0.29; // planet radius
 
-  // ── Background: transparent round rect ──
-  const bg = size * 0.14;
+  // ── Background: dark rounded rect ──
+  const bg = size * 0.18;
   ctx.fillStyle = "#0c0c14";
   ctx.beginPath();
   ctx.moveTo(bg, 0); ctx.lineTo(size - bg, 0);
@@ -26,48 +24,54 @@ for (const size of SIZES) {
   ctx.closePath();
   ctx.fill();
 
-  // ── Ring (back half) ──
-  const ringRx = r * 1.68, ringRy = r * 0.45;
-  const angle = -28 * Math.PI / 180;
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(angle);
-  ctx.beginPath();
-  ctx.ellipse(0, 0, ringRx, ringRy, 0, Math.PI, 0); // back half only
-  ctx.strokeStyle = "rgba(196,181,253,0.55)";
-  ctx.lineWidth = size * 0.065;
-  ctx.stroke();
-  ctx.restore();
+  // Proportional values based on viewBox 0 0 36 36 scaled to `size`
+  const scale  = size / 36;
+  const lensX  = 14 * scale;
+  const lensY  = 14 * scale;
+  const lensR  = 9  * scale;
+  const sw     = 2.2 * scale;  // stroke width for lens ring
+  const crossW = 1.8 * scale;  // stroke width for crosshair
+  const handleW = 3  * scale;  // stroke width for handle
 
-  // ── Planet body ──
-  const grad = ctx.createRadialGradient(cx - r * 0.28, cy - r * 0.28, r * 0.08, cx, cy, r);
-  grad.addColorStop(0, "#a78bfa");
-  grad.addColorStop(0.45, "#7c3aed");
-  grad.addColorStop(1, "#4c1d95");
+  ctx.lineCap = "round";
+
+  // ── Lens fill (subtle purple tint) ──
   ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.fillStyle = grad;
+  ctx.arc(lensX, lensY, lensR, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(124,58,237,0.15)";
   ctx.fill();
 
-  // ── Highlight ──
-  const hlGrad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, 0, cx - r * 0.3, cy - r * 0.3, r * 0.5);
-  hlGrad.addColorStop(0, "rgba(216,200,255,0.45)");
-  hlGrad.addColorStop(1, "rgba(216,200,255,0)");
+  // ── Lens ring ──
   ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.fillStyle = hlGrad;
-  ctx.fill();
-
-  // ── Ring (front half) ──
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(angle);
-  ctx.beginPath();
-  ctx.ellipse(0, 0, ringRx, ringRy, 0, 0, Math.PI); // front half
-  ctx.strokeStyle = "rgba(196,181,253,0.75)";
-  ctx.lineWidth = size * 0.065;
+  ctx.arc(lensX, lensY, lensR, 0, Math.PI * 2);
+  ctx.strokeStyle = "#a78bfa";
+  ctx.lineWidth = sw;
   ctx.stroke();
-  ctx.restore();
+
+  // ── Plus / crosshair inside lens ──
+  const armLen = lensR * 0.55;
+  ctx.strokeStyle = "#c4b5fd";
+  ctx.lineWidth = crossW;
+  // vertical
+  ctx.beginPath();
+  ctx.moveTo(lensX, lensY - armLen);
+  ctx.lineTo(lensX, lensY + armLen);
+  ctx.stroke();
+  // horizontal
+  ctx.beginPath();
+  ctx.moveTo(lensX - armLen, lensY);
+  ctx.lineTo(lensX + armLen, lensY);
+  ctx.stroke();
+
+  // ── Handle ──
+  const handleStart = 21 * scale;
+  const handleEnd   = 29.5 * scale;
+  ctx.strokeStyle = "#a78bfa";
+  ctx.lineWidth = handleW;
+  ctx.beginPath();
+  ctx.moveTo(handleStart, handleStart);
+  ctx.lineTo(handleEnd, handleEnd);
+  ctx.stroke();
 
   const out = path.join(__dirname, "icons", `icon${size}.png`);
   fs.writeFileSync(out, canvas.toBuffer("image/png"));
