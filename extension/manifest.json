@@ -2,10 +2,11 @@
   "manifest_version": 3,
   "name": "Mediacheck – War Summary Warnings",
   "short_name": "Mediacheck",
-  "version": "1.0.0",
-  "description": "Displays media-reliability warnings next to flagged accounts on Twitter/X.",
+  "version": "2.0.0",
+  "description": "Flags state media, propaganda, unverified claims, and satire accounts on Twitter/X with colour-coded warnings and optional content blocking.",
   "permissions": [
-    "storage"
+    "storage",
+    "contextMenus"
   ],
   "host_permissions": [
     "https://twitter.com/*",
@@ -24,6 +25,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
+    "default_title": "Mediacheck",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

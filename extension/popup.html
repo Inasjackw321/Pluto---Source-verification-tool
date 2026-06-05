@@ -6,184 +6,419 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg: #f7f7f8;
+      --surface: #fff;
+      --border: #e4e4e7;
+      --text: #111;
+      --text2: #555;
+      --text3: #999;
+      --accent: #111;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      width: 340px;
-      background: #fafafa;
-      color: #111;
+      width: 360px;
+      background: var(--bg);
+      color: var(--text);
       font-size: 13px;
     }
 
-    /* Header */
+    /* ── Header ─────────────────────────────────────────────── */
     header {
       background: #111;
-      color: #fff;
-      padding: 14px 16px 12px;
+      padding: 13px 15px 11px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    .header-icon {
-      width: 28px; height: 28px;
+    .h-logo {
+      width: 30px; height: 30px;
       background: #fff;
-      border-radius: 6px;
+      border-radius: 7px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 900; color: #111;
+      font-size: 17px; font-weight: 900; color: #111;
       flex-shrink: 0;
+      letter-spacing: -1px;
     }
-    header h1 { font-size: 15px; font-weight: 700; }
-    header p  { font-size: 10.5px; color: #888; margin-top: 1px; }
+    .h-text h1 { font-size: 15px; font-weight: 700; color: #fff; }
+    .h-text p  { font-size: 10.5px; color: #777; margin-top: 1px; }
 
-    /* Category legend */
-    .legend {
+    /* ── Tabs ───────────────────────────────────────────────── */
+    .tabs {
       display: flex;
-      gap: 6px;
-      padding: 10px 14px;
-      border-bottom: 1px solid #e8e8e8;
-      background: #fff;
-      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
     }
-    .legend-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 10.5px;
-      font-weight: 600;
-      border: 1.5px solid currentColor;
+    .tab-btn {
+      flex: 1;
+      padding: 9px 6px 8px;
+      font-size: 11.5px; font-weight: 600;
+      color: var(--text3);
+      background: none; border: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      font-family: inherit;
     }
-    .legend-chip.state  { color: #b84c00; background: #fff0e0; }
-    .legend-chip.misinfo { color: #b71c1c; background: #fce8e8; }
-    .legend-chip.satire { color: #1a6bb5; background: #e8f0fe; }
+    .tab-btn.active {
+      color: var(--text);
+      border-bottom-color: #111;
+    }
+    .tab-btn:hover:not(.active) { color: var(--text2); }
 
-    /* Add account */
-    .section { padding: 10px 14px; border-bottom: 1px solid #e8e8e8; background: #fff; }
-    .section-title {
-      font-size: 10px; font-weight: 700; color: #888;
-      text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px;
-    }
-    .add-row { display: flex; gap: 5px; }
-    .add-row input {
-      flex: 1; border: 1.5px solid #ddd; border-radius: 8px;
-      padding: 6px 9px; font-size: 12.5px; outline: none;
-      font-family: inherit; background: #f5f5f5;
-      transition: border-color 0.15s;
-    }
-    .add-row input:focus { border-color: #555; background: #fff; }
-    .add-row input::placeholder { color: #aaa; }
-    .add-row select {
-      border: 1.5px solid #ddd; border-radius: 8px;
-      padding: 6px 4px; font-size: 11.5px; background: #f5f5f5;
-      font-family: inherit; outline: none;
-    }
-    .btn-add {
-      background: #111; color: #fff; border: none;
-      border-radius: 8px; padding: 6px 13px;
-      font-size: 12px; font-weight: 600; cursor: pointer;
-      font-family: inherit; white-space: nowrap;
-      transition: background 0.15s;
-    }
-    .btn-add:hover { background: #333; }
-    #addError { font-size: 11px; color: #b71c1c; margin-top: 5px; min-height: 14px; }
+    /* ── Tab panes ──────────────────────────────────────────── */
+    .pane { display: none; }
+    .pane.active { display: block; }
 
-    /* Account list */
-    .section.list { padding: 0; max-height: 280px; overflow-y: auto; }
-
-    .list-header {
-      position: sticky; top: 0; z-index: 1;
-      background: #fafafa;
-      padding: 8px 14px 6px;
-      font-size: 10px; font-weight: 700; color: #888;
-      text-transform: uppercase; letter-spacing: .6px;
-      border-bottom: 1px solid #e8e8e8;
+    /* ── Shared field styles ────────────────────────────────── */
+    input[type="text"], select, textarea {
+      font-family: inherit;
+      font-size: 12.5px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.14s;
     }
+    input[type="text"]:focus, select:focus { border-color: #555; background: #fff; }
+
+    .btn {
+      background: #111; color: #fff;
+      border: none; border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      white-space: nowrap;
+      transition: background 0.14s;
+    }
+    .btn:hover { background: #333; }
+    .btn-sm {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      color: var(--text2);
+      border-radius: 7px;
+      padding: 3px 9px;
+      font-size: 10.5px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      white-space: nowrap;
+      transition: background 0.12s, color 0.12s;
+    }
+    .btn-sm:hover { background: #e8e8e8; }
+    .btn-sm.red { color: #b71c1c; border-color: #f5c0c0; }
+    .btn-sm.red:hover { background: #fce8e8; border-color: #e57373; }
+    .btn-sm.orange { color: #b84c00; border-color: #f5d5b8; }
+    .btn-sm.orange:hover { background: #fff1e6; }
+
+    /* ── ACCOUNTS PANE ──────────────────────────────────────── */
+    .search-bar {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      display: flex; gap: 6px;
+    }
+    .search-bar input { flex: 1; padding: 5px 9px; }
+    .search-bar .count {
+      font-size: 10.5px; color: var(--text3);
+      align-self: center; white-space: nowrap;
+    }
+
+    .add-section {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .add-row { display: flex; gap: 5px; align-items: center; }
+    .add-row input { flex: 1; padding: 6px 9px; }
+    .add-row select { padding: 6px 4px; }
+    #addError {
+      font-size: 11px; color: #b71c1c;
+      margin-top: 4px; min-height: 15px;
+    }
+    .pending-hint {
+      font-size: 11px; color: #555; margin-bottom: 6px;
+      background: #fffbe6; border: 1px solid #f0d060;
+      padding: 4px 8px; border-radius: 6px; display: none;
+    }
+
+    .acc-list { max-height: 260px; overflow-y: auto; background: var(--surface); }
 
     .acc-item {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 14px;
-      border-bottom: 1px solid #f0f0f0;
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--border);
       transition: background 0.1s;
     }
-    .acc-item:hover { background: #f7f7f7; }
     .acc-item:last-child { border-bottom: none; }
+    .acc-item:hover { background: var(--bg); }
     .acc-item.disabled .acc-handle { color: #bbb; text-decoration: line-through; }
 
+    .acc-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
     .acc-handle {
-      flex: 1; font-size: 12.5px; font-weight: 600;
+      flex: 1; font-size: 12px; font-weight: 600;
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-
     .acc-badge {
-      font-size: 10px; padding: 2px 6px; border-radius: 10px;
-      font-weight: 700; white-space: nowrap; border: 1.5px solid currentColor;
+      font-size: 9.5px; font-weight: 700; padding: 2px 6px;
+      border-radius: 10px; white-space: nowrap;
+      border: 1.5px solid currentColor;
     }
-    .acc-badge.state  { color: #b84c00; background: #fff0e0; }
-    .acc-badge.misinfo { color: #b71c1c; background: #fce8e8; }
-    .acc-badge.satire { color: #1a6bb5; background: #e8f0fe; }
+    .blocked-indicator {
+      font-size: 9px; background: #b71c1c; color: #fff;
+      padding: 1px 5px; border-radius: 8px; font-weight: 700;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .acc-actions { display: flex; gap: 3px; flex-shrink: 0; }
 
-    .blocked-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #b71c1c; flex-shrink: 0; title: "Blocked";
+    .no-results {
+      padding: 18px 12px; text-align: center;
+      font-size: 12px; color: var(--text3);
     }
 
-    .acc-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    /* category colours */
+    .cat-state-propaganda { color: #a83200; background: #fff1e6; }
+    .cat-state-funded     { color: #7a4800; background: #fff8ed; }
+    .cat-misinformation   { color: #b71c1c; background: #fce8e8; }
+    .cat-conspiracy       { color: #6a0dad; background: #f3e8ff; }
+    .cat-satire           { color: #1a6bb5; background: #e8f0fe; }
 
-    .btn-sm {
-      background: #f0f0f0; border: none; border-radius: 6px;
-      padding: 3px 8px; font-size: 10.5px; font-weight: 600;
-      cursor: pointer; color: #444; font-family: inherit;
-      transition: background 0.12s;
+    /* export/import bar */
+    .io-bar {
+      display: flex; gap: 6px; padding: 8px 12px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      justify-content: flex-end;
     }
-    .btn-sm:hover { background: #e0e0e0; }
-    .btn-sm.danger { color: #b71c1c; }
-    .btn-sm.danger:hover { background: #fce8e8; }
+    .io-bar .btn-sm { font-size: 10.5px; }
 
+    /* ── SETTINGS PANE ──────────────────────────────────────── */
+    .settings-section {
+      padding: 10px 14px 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .settings-section h3 {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .6px; color: var(--text3); margin-bottom: 10px;
+    }
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label { font-size: 12.5px; font-weight: 500; color: var(--text); }
+    .toggle-desc  { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+    /* Custom toggle switch */
+    .toggle-switch {
+      position: relative;
+      width: 38px; height: 22px; flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: #ccc; border-radius: 11px; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-track::after {
+      content: "";
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 16px; height: 16px;
+      background: #fff; border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    .toggle-switch input:checked + .toggle-track { background: #111; }
+    .toggle-switch input:checked + .toggle-track::after { transform: translateX(16px); }
+
+    /* ── LEGEND PANE ────────────────────────────────────────── */
+    .legend-section { padding: 10px 12px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .legend-section h3 {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .6px; color: var(--text3); margin-bottom: 8px;
+    }
+    .legend-item {
+      display: flex; gap: 8px; align-items: flex-start;
+      padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px;
+    }
+    .legend-item:last-child { border-bottom: none; }
+    .legend-chip {
+      font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px;
+      border: 1.5px solid currentColor; white-space: nowrap; flex-shrink: 0; margin-top: 1px;
+    }
+    .legend-desc { font-size: 11.5px; color: var(--text2); line-height: 1.4; }
+
+    /* ── Footer ─────────────────────────────────────────────── */
     footer {
-      padding: 9px 14px;
-      font-size: 10.5px; color: #aaa; text-align: center;
-      border-top: 1px solid #e8e8e8; background: #fff;
+      padding: 7px 12px;
+      font-size: 10px; color: var(--text3);
+      text-align: center;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
     }
   </style>
 </head>
 <body>
+
   <header>
-    <div class="header-icon">M</div>
-    <div>
+    <div class="h-logo">M</div>
+    <div class="h-text">
       <h1>Mediacheck</h1>
-      <p>War Summary · Media reliability warnings</p>
+      <p>War Summary — Twitter/X media reliability</p>
     </div>
   </header>
 
-  <div class="legend">
-    <span class="legend-chip state">⚑ State media</span>
-    <span class="legend-chip misinfo">⚠ Unverified</span>
-    <span class="legend-chip satire">✎ Satire</span>
-    <span style="font-size:10px;color:#888;align-self:center;margin-left:2px">
-      <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#b71c1c;margin-right:3px;vertical-align:middle"></span>= content hidden
-    </span>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="accounts">Accounts</button>
+    <button class="tab-btn"        data-tab="settings">Settings</button>
+    <button class="tab-btn"        data-tab="legend">Categories</button>
   </div>
 
-  <div class="section">
-    <div class="section-title">Add account</div>
-    <div class="add-row">
-      <input id="handleInput" type="text" placeholder="@username" autocomplete="off" spellcheck="false" />
-      <select id="catSelect">
-        <option value="state-affiliated">State media</option>
-        <option value="misinformation">Unverified</option>
-        <option value="satire">Satire</option>
-      </select>
-      <button class="btn-add" id="addBtn">Add</button>
+  <!-- ── ACCOUNTS TAB ──────────────────────────────────────── -->
+  <div class="pane active" id="tab-accounts">
+
+    <div class="search-bar">
+      <input id="searchInput" type="text" placeholder="Search accounts…" autocomplete="off" />
+      <span class="count" id="accCount"></span>
     </div>
-    <div id="addError"></div>
+
+    <div class="add-section">
+      <div class="pending-hint" id="pendingHint"></div>
+      <div class="add-row">
+        <input id="handleInput" type="text" placeholder="@username" autocomplete="off" spellcheck="false" />
+        <select id="catSelect">
+          <option value="state-propaganda">State propaganda</option>
+          <option value="state-funded">State-funded</option>
+          <option value="misinformation">Unverified</option>
+          <option value="conspiracy">Conspiracy</option>
+          <option value="satire">Satire</option>
+        </select>
+        <button class="btn" id="addBtn">Add</button>
+      </div>
+      <div id="addError"></div>
+    </div>
+
+    <div class="acc-list" id="accountList"></div>
+
+    <div class="io-bar">
+      <button class="btn-sm" id="exportBtn">Export JSON</button>
+      <label class="btn-sm" style="cursor:pointer">
+        Import JSON <input type="file" id="importFile" accept=".json" style="display:none" />
+      </label>
+    </div>
+
   </div>
 
-  <div class="section list">
-    <div class="list-header">Flagged accounts</div>
-    <div id="accountList"></div>
+  <!-- ── SETTINGS TAB ──────────────────────────────────────── -->
+  <div class="pane" id="tab-settings">
+
+    <div class="settings-section">
+      <h3>Features</h3>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Profile page banner</div>
+          <div class="toggle-desc">Show warning banner above a flagged account's timeline</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="s-banner" checked />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Tweet badges</div>
+          <div class="toggle-desc">Show warning pill next to flagged usernames in tweets</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="s-badge" checked />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Avatar indicator</div>
+          <div class="toggle-desc">Show a coloured dot on profile pictures of flagged accounts</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="s-avatar" checked />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Content blocking</div>
+          <div class="toggle-desc">Blur tweet content from state-propaganda accounts behind a reveal overlay</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="s-block" checked />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3>Data</h3>
+      <div class="toggle-row" style="gap:10px">
+        <div class="toggle-label" style="font-size:12px;color:var(--text2)">
+          Reset all custom accounts and settings to default
+        </div>
+        <button class="btn-sm red" id="resetBtn" style="flex-shrink:0">Reset all</button>
+      </div>
+    </div>
+
   </div>
 
-  <footer>Hover any badge on Twitter/X to see details.</footer>
+  <!-- ── CATEGORIES / LEGEND TAB ──────────────────────────── -->
+  <div class="pane" id="tab-legend">
+
+    <div class="legend-section">
+      <h3>Warning levels</h3>
+
+      <div class="legend-item">
+        <span class="legend-chip cat-state-propaganda">⚑ State Propaganda</span>
+        <span class="legend-desc">Government-controlled outlet with no editorial independence. Content reflects official state narrative. Worst offenders have content hidden by default.</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-chip cat-state-funded">◈ State-Funded</span>
+        <span class="legend-desc">Funded by a government but may have some editorial independence. Coverage can reflect the funder's interests on key conflicts.</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-chip cat-misinformation">⚠ Unverified</span>
+        <span class="legend-desc">Frequently posts unverified, misleading, or false information — particularly during conflict. Low correction rate.</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-chip cat-conspiracy">✕ Conspiracy</span>
+        <span class="legend-desc">Regularly promotes conspiracy theories, pseudoscience, or fringe narratives about geopolitical events.</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-chip cat-satire">✎ Satire</span>
+        <span class="legend-desc">Satirical publication. All content is fictional. Flagged to prevent viral spread of headlines as real news.</span>
+      </div>
+    </div>
+
+    <div class="legend-section" style="border-bottom:none">
+      <h3>Sources &amp; methodology</h3>
+      <div style="font-size:11.5px;color:var(--text2);line-height:1.6">
+        Accounts are flagged based on: government ownership records, foreign-agent registrations (FARA, EU), broadcast licence revocations (Ofcom), academic research (Oxford Internet Institute, Stanford Internet Observatory), and fact-checking databases (NewsGuard, Bellingcat).
+        <br /><br />
+        Hover any badge on Twitter/X to see the specific source for that account.
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    Mediacheck v2.0 · Hover a badge for source details
+  </footer>
 
   <script src="accounts.js"></script>
   <script src="popup.js"></script>
