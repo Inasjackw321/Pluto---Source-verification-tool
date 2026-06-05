@@ -70,9 +70,12 @@
 
 .psw-pill {
   display: none; align-items: center; justify-content: center;
-  min-width: 22px; height: 22px; padding: 0 6px;
+  min-width: 20px; height: 20px; padding: 0 5px;
   background: #7c3aed; color: #fff;
-  border-radius: 11px; font-size: 11px; font-weight: 700;
+  border-radius: 10px; font-size: 11px; font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,0.18) inset;
+  border: 1px solid rgba(255,255,255,0.15);
   margin-left: 2px; transition: background 0.2s;
 }
 .psw-pill:not(.pluto-pill-hide) { display: inline-flex; }

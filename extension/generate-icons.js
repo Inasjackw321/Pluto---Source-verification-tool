@@ -34,7 +34,7 @@ for (const size of SIZES) {
   ctx.rotate(angle);
   ctx.beginPath();
   ctx.ellipse(0, 0, ringRx, ringRy, 0, Math.PI, 0); // back half only
-  ctx.strokeStyle = "rgba(196,181,253,0.55)";
+  ctx.strokeStyle = "rgba(167,139,250,0.50)";
   ctx.lineWidth = size * 0.065;
   ctx.stroke();
   ctx.restore();
@@ -51,7 +51,7 @@ for (const size of SIZES) {
 
   // ── Highlight ──
   const hlGrad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, 0, cx - r * 0.3, cy - r * 0.3, r * 0.5);
-  hlGrad.addColorStop(0, "rgba(216,200,255,0.45)");
+  hlGrad.addColorStop(0, "rgba(167,139,250,0.30)");
   hlGrad.addColorStop(1, "rgba(216,200,255,0)");
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -64,7 +64,7 @@ for (const size of SIZES) {
   ctx.rotate(angle);
   ctx.beginPath();
   ctx.ellipse(0, 0, ringRx, ringRy, 0, 0, Math.PI); // front half
-  ctx.strokeStyle = "rgba(196,181,253,0.75)";
+  ctx.strokeStyle = "rgba(167,139,250,0.75)";
   ctx.lineWidth = size * 0.065;
   ctx.stroke();
   ctx.restore();

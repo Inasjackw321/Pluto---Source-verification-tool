@@ -27,7 +27,9 @@
     "satire":           `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h7a.8.8 0 01.8.8V7a.8.8 0 01-.8.8H6.5L4.5 9.5V7.8H2A.8.8 0 011.2 7V2.8A.8.8 0 012 2Z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/><path d="M3.5 5.5c.3-.6.9-.6 1.4 0 .4.6 1.1.6 1.4 0" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" fill="none"/></svg>`
   };
 
-  const PLANET_SVG_SM = `<svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="9" cy="9" rx="8.5" ry="2.8" stroke="#a78bfa" stroke-width="1.1" fill="none" transform="rotate(-25 9 9)" opacity="0.55"/><circle cx="9" cy="9" r="5.5" fill="#7c3aed"/><circle cx="7" cy="7" r="2.1" fill="#a78bfa" opacity="0.32"/><path d="M14.2 5.3Q16.5 9 14.2 12.7" stroke="#c4b5fd" stroke-width="1.1" fill="none" stroke-linecap="round" opacity="0.65"/></svg>`;
+  const PLUTO_LOGO_SM = `<svg width="16" height="16" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="pluto-sm" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="55%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#4c1d95"/></radialGradient></defs><ellipse cx="18" cy="18" rx="17" ry="5.5" stroke="#a78bfa" stroke-width="2.2" fill="none" transform="rotate(-28 18 18)" opacity="0.5"/><circle cx="18" cy="18" r="10.5" fill="url(#pluto-sm)"/><circle cx="14" cy="13" r="4" fill="#a78bfa" opacity="0.3"/><path d="M27.5 11 Q31.5 18 27.5 25" stroke="#c4b5fd" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.65"/></svg>`;
+  const PLUTO_LOGO_MD = `<svg width="26" height="26" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="pluto-md" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="55%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#4c1d95"/></radialGradient></defs><ellipse cx="18" cy="18" rx="17" ry="5.5" stroke="#a78bfa" stroke-width="2.2" fill="none" transform="rotate(-28 18 18)" opacity="0.5"/><circle cx="18" cy="18" r="10.5" fill="url(#pluto-md)"/><circle cx="14" cy="13" r="4" fill="#a78bfa" opacity="0.3"/><path d="M27.5 11 Q31.5 18 27.5 25" stroke="#c4b5fd" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.65"/></svg>`;
+  const PLUTO_LOGO_LG = `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="pluto-lg" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="55%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#4c1d95"/></radialGradient></defs><ellipse cx="18" cy="18" rx="17" ry="5.5" stroke="#a78bfa" stroke-width="2.2" fill="none" transform="rotate(-28 18 18)" opacity="0.5"/><circle cx="18" cy="18" r="10.5" fill="url(#pluto-lg)"/><circle cx="14" cy="13" r="4" fill="#a78bfa" opacity="0.3"/><path d="M27.5 11 Q31.5 18 27.5 25" stroke="#c4b5fd" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.65"/></svg>`;
 
   // ── Load ──────────────────────────────────────────────────────────────────────
 
@@ -95,7 +97,7 @@
     const toast = document.createElement("div");
     toast.className = "pluto-toast";
     toast.innerHTML = `
-      <span class="pluto-toast-icon">${PLANET_SVG_SM}</span>
+      <span class="pluto-toast-icon">${PLUTO_LOGO_SM}</span>
       <div class="pluto-toast-text">
         <span class="pluto-toast-main">${msg}</span>
         ${sub ? `<span class="pluto-toast-sub">${sub}</span>` : ""}
@@ -154,7 +156,7 @@
     item.setAttribute("role", "menuitem");
     item.setAttribute("tabindex", "0");
     item.innerHTML = `
-      <span class="pluto-menu-icon">${PLANET_SVG_SM}</span>
+      <span class="pluto-menu-icon">${PLUTO_LOGO_SM}</span>
       <span class="pluto-menu-text">Flag @${handle} with Pluto…</span>
     `;
     item.addEventListener("click", e => {
@@ -224,20 +226,13 @@
 
   const SIDEBAR_ID = "pluto-sidebar-widget";
 
-  const PLANET_SVG_LG = `<svg width="26" height="26" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="18" cy="18" rx="17" ry="5.5" stroke="#a78bfa" stroke-width="2.2" fill="none" transform="rotate(-28 18 18)" opacity="0.5"/>
-    <circle cx="18" cy="18" r="10.5" fill="url(#pg)"/>
-    <circle cx="14" cy="13" r="4.5" fill="#a78bfa" opacity="0.3"/>
-    <path d="M27.5 11Q31.5 18 27.5 25" stroke="#c4b5fd" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.6"/>
-    <defs><radialGradient id="pg" cx="35%" cy="35%" r="65%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="55%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#4c1d95"/></radialGradient></defs>
-  </svg>`;
 
   function makeSidebarWidget() {
     const el = document.createElement("div");
     el.id = SIDEBAR_ID;
     el.innerHTML = `
       <div class="psw-wrap">
-        <div class="psw-icon">${PLANET_SVG_LG}</div>
+        <div class="psw-icon">${PLUTO_LOGO_MD}</div>
         <div class="psw-body">
           <span class="psw-name">Pluto</span>
           <span class="psw-sub" id="pluto-sub">Media Intelligence</span>

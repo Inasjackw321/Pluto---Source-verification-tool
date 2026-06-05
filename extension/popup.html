@@ -317,11 +317,17 @@
   <div class="header">
     <!-- Planet SVG logo -->
     <svg class="header-logo" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="pluto-lg" cx="35%" cy="35%" r="65%">
+          <stop offset="0%"   stop-color="#a78bfa"/>
+          <stop offset="55%"  stop-color="#7c3aed"/>
+          <stop offset="100%" stop-color="#4c1d95"/>
+        </radialGradient>
+      </defs>
       <ellipse cx="18" cy="18" rx="17" ry="5.5" stroke="#a78bfa" stroke-width="2.2" fill="none"
-        transform="rotate(-28 18 18)" opacity="0.55"/>
-      <circle cx="18" cy="18" r="10.5" fill="#7c3aed"/>
-      <circle cx="14" cy="13" r="4.5" fill="#a78bfa" opacity="0.35"/>
-      <circle cx="21" cy="22" r="2.5" fill="#5b21b6" opacity="0.45"/>
+        transform="rotate(-28 18 18)" opacity="0.5"/>
+      <circle cx="18" cy="18" r="10.5" fill="url(#pluto-lg)"/>
+      <circle cx="14" cy="13" r="4" fill="#a78bfa" opacity="0.3"/>
       <path d="M27.5 11 Q31.5 18 27.5 25" stroke="#c4b5fd" stroke-width="2.2" fill="none"
         stroke-linecap="round" opacity="0.65"/>
     </svg>
