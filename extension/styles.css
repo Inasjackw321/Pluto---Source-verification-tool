@@ -1,240 +1,252 @@
-/* ═══════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    PLUTO — injected styles for twitter.com / x.com
-   Brand color: #7c3aed (violet)
-═══════════════════════════════════════════════════════════════ */
+   Brand: #7c3aed  |  Font: system-ui
+═══════════════════════════════════════════════════════════ */
 
-/* ── Sidebar widget ─────────────────────────────────────────── */
+/* ── Keyframe animations ─────────────────────────────────── */
+
+@keyframes pluto-badge-in {
+  from { opacity: 0; transform: scale(0.78) translateY(3px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);   }
+}
+@keyframes pluto-banner-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+@keyframes pluto-overlay-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+@keyframes pluto-sidebar-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+@keyframes pluto-bump {
+  0%   { transform: scale(1);    }
+  40%  { transform: scale(1.28); }
+  70%  { transform: scale(0.93); }
+  100% { transform: scale(1);    }
+}
+@keyframes pluto-toast-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes pluto-spin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Sidebar widget ──────────────────────────────────────── */
 
 #pluto-sidebar-widget {
+  animation: pluto-sidebar-in 0.35s cubic-bezier(.22,1,.36,1) both;
+  margin: 2px 0 4px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  margin: 4px 0 2px;
 }
 
-.psw-inner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+.psw-wrap {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 12px;
   border-radius: 9999px;
   cursor: default;
-  transition: background 0.15s;
-  max-width: 220px;
+  transition: background 0.2s;
+  max-width: 230px;
 }
+.psw-wrap:hover { background: rgba(124,58,237,0.09); }
 
-.psw-inner:hover { background: rgba(124, 58, 237, 0.08); }
+.psw-icon { flex-shrink: 0; display: flex; align-items: center; }
 
-@media (prefers-color-scheme: dark) {
-  .psw-inner:hover { background: rgba(167, 139, 250, 0.12); }
-}
-
-.psw-logo { flex-shrink: 0; display: flex; align-items: center; }
-
-.psw-text {
-  display: flex; flex-direction: column; gap: 0px;
-  min-width: 0;
+.psw-body {
+  display: flex; flex-direction: column; gap: 1px; min-width: 0;
 }
 .psw-name {
-  font-size: 19px; font-weight: 700; letter-spacing: -0.3px;
-  color: #0f172a; line-height: 1.15;
+  font-size: 19px; font-weight: 800; letter-spacing: -0.5px;
+  color: #0f172a; line-height: 1.1;
 }
 .psw-sub {
-  font-size: 11px; color: #7c3aed; font-weight: 500; line-height: 1;
+  font-size: 11px; font-weight: 500; color: #7c3aed;
+  line-height: 1; transition: color 0.2s;
 }
 
-.psw-count {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 20px; height: 20px; padding: 0 5px;
+.psw-pill {
+  display: none; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; padding: 0 6px;
   background: #7c3aed; color: #fff;
-  border-radius: 10px; font-size: 10.5px; font-weight: 700;
-  flex-shrink: 0; margin-left: auto;
+  border-radius: 11px; font-size: 11px; font-weight: 700;
+  margin-left: 2px; transition: background 0.2s;
 }
+.psw-pill:not(.pluto-pill-hide) { display: inline-flex; }
+.psw-pill.pluto-bump { animation: pluto-bump 0.45s cubic-bezier(.22,1,.36,1); }
+.psw-pill.pluto-pill-hide { display: none; }
 
-/* Dark mode text */
 @media (prefers-color-scheme: dark) {
-  .psw-name { color: #f8fafc; }
+  .psw-name { color: #f1f5f9; }
   .psw-sub  { color: #a78bfa; }
+  .psw-wrap:hover { background: rgba(167,139,250,0.1); }
 }
 
-/* ── Inline badge ───────────────────────────────────────────── */
+/* ── Inline badge ────────────────────────────────────────── */
 
 .pluto-badge {
   position: relative;
-  display: inline-flex; align-items: center; gap: 3px;
+  display: inline-flex; align-items: center; gap: 4px;
   margin-left: 5px;
-  padding: 1.5px 7px 1.5px 5px;
+  padding: 2px 8px 2px 5px;
   border-radius: 20px;
   font-size: 10.5px; font-weight: 700;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
   cursor: default; vertical-align: middle;
   white-space: nowrap; user-select: none;
-  letter-spacing: 0.1px;
   background: var(--pb);
   color: var(--pc);
   border: 1.5px solid var(--pbd);
-  transition: filter 0.12s, box-shadow 0.12s;
+  animation: pluto-badge-in 0.28s cubic-bezier(.22,1,.36,1) both;
+  transition: filter 0.12s, box-shadow 0.12s, transform 0.12s;
 }
 .pluto-badge:hover {
-  filter: brightness(0.95);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  filter: brightness(0.93);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
 }
-.pb-icon { font-size: 9px; opacity: 0.8; }
+
+.pb-icon {
+  display: flex; align-items: center;
+  opacity: 0.88; flex-shrink: 0;
+}
 .pb-text { font-size: 10px; }
 
-/* ── Tooltip ────────────────────────────────────────────────── */
+/* ── Tooltip ─────────────────────────────────────────────── */
 
 .pluto-tip {
   display: none;
   position: absolute;
-  bottom: calc(100% + 10px);
-  left: 50%; transform: translateX(-50%);
+  bottom: calc(100% + 11px); left: 50%; transform: translateX(-50%);
   width: 280px;
-  background: #0f172a;
+  background: #0d1117;
   color: #e2e8f0;
   font-size: 12px; font-weight: 400;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  padding: 12px 14px;
-  border-radius: 12px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+  padding: 13px 14px;
+  border-radius: 13px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06);
   white-space: normal; z-index: 99999;
   pointer-events: none; line-height: 1.55; text-align: left;
+  animation: pluto-overlay-in 0.2s ease both;
 }
 .pluto-tip::after {
   content: ""; position: absolute;
   top: 100%; left: 50%; transform: translateX(-50%);
   border: 7px solid transparent;
-  border-top-color: #0f172a;
+  border-top-color: #0d1117;
 }
 .pluto-badge:hover .pluto-tip { display: block; }
 
 .pt-head {
   display: flex; align-items: flex-start; gap: 10px;
   margin-bottom: 10px; padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 .pt-head-icon {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: rgba(124,58,237,0.25); color: #a78bfa;
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  background: rgba(124,58,237,0.22); color: #a78bfa;
   display: flex; align-items: center; justify-content: center;
-  font-size: 15px; font-weight: 700; flex-shrink: 0;
 }
-.pt-head-title { font-weight: 700; font-size: 13px; color: #fff; }
-.pt-head-handle { font-size: 11px; color: #64748b; margin-top: 2px; }
+.pt-head-icon svg { width: 16px; height: 16px; }
 
-.pt-trust {
-  display: flex; align-items: center; gap: 6px;
-  margin-bottom: 9px; font-size: 10.5px; color: #64748b;
-}
-.pt-trust-label { flex-shrink: 0; }
-.pt-trust-bar {
-  flex: 1; height: 4px; background: rgba(255,255,255,0.1);
-  border-radius: 2px; overflow: hidden;
-}
-.pt-trust-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
-.pt-trust-val { flex-shrink: 0; color: #94a3b8; }
+.pt-head-title { font-weight: 700; font-size: 12.5px; color: #fff; }
+.pt-head-handle { font-size: 11px; color: #475569; margin-top: 2px; }
 
 .pt-body { color: #94a3b8; line-height: 1.55; font-size: 11.5px; }
 .pt-source {
-  margin-top: 9px; font-size: 10px; color: #475569;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 9px; font-size: 10px; color: #374151;
+  border-top: 1px solid rgba(255,255,255,0.05);
   padding-top: 8px; font-style: italic;
 }
 
-/* ── Avatar dot ─────────────────────────────────────────────── */
+/* ── Avatar dot ──────────────────────────────────────────── */
 
 .pluto-avatar-dot {
-  position: absolute;
-  bottom: 0; right: 0;
-  width: 11px; height: 11px;
-  border-radius: 50%;
-  border: 2.5px solid #fff;
-  z-index: 5; pointer-events: none;
+  position: absolute; bottom: 0; right: 0;
+  width: 11px; height: 11px; border-radius: 50%;
+  border: 2.5px solid #fff; z-index: 5;
+  pointer-events: none;
+  animation: pluto-badge-in 0.3s 0.15s cubic-bezier(.22,1,.36,1) both;
 }
 @media (prefers-color-scheme: dark) {
   .pluto-avatar-dot { border-color: #000; }
 }
 
-/* ── Profile banner ─────────────────────────────────────────── */
+/* ── Profile banner ──────────────────────────────────────── */
 
 #pluto-profile-banner {
-  display: flex; align-items: flex-start; gap: 0;
+  display: flex; align-items: stretch; gap: 0;
   background: var(--pb);
   border-bottom: 1px solid rgba(0,0,0,0.07);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  position: relative;
+  animation: pluto-banner-in 0.32s cubic-bezier(.22,1,.36,1) both;
+  transition: opacity 0.22s, transform 0.22s;
+}
+#pluto-profile-banner.pluto-banner-out {
+  opacity: 0; transform: translateY(-6px);
 }
 
-.pluto-banner-bar {
-  width: 4px; align-self: stretch;
-  background: var(--pbd); flex-shrink: 0;
-}
+.pluto-banner-bar { width: 4px; background: var(--pbd); flex-shrink: 0; }
 
-.pluto-banner-icon {
-  padding: 14px 10px 14px 14px;
-  font-size: 18px; color: var(--pc);
-  flex-shrink: 0; line-height: 1;
+.pluto-banner-icon-wrap {
   display: flex; align-items: flex-start;
+  padding: 14px 10px 14px 13px; flex-shrink: 0;
 }
+.pluto-banner-cat-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--pbd); color: #fff;
+}
+.pluto-banner-cat-icon svg { width: 16px; height: 16px; }
 
-.pluto-banner-body {
-  flex: 1; min-width: 0;
-  padding: 13px 6px 13px 2px;
-}
+.pluto-banner-body { flex: 1; min-width: 0; padding: 13px 6px 13px 2px; }
 
 .pluto-banner-top {
   display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
   margin-bottom: 5px;
 }
-.pluto-banner-name {
-  font-size: 13px; font-weight: 700; color: var(--pc);
-}
-.pluto-banner-cat {
-  font-size: 10px; font-weight: 600;
-  background: rgba(0,0,0,0.06);
-  color: var(--pc);
-  padding: 1px 7px; border-radius: 10px;
-}
-.pluto-banner-chip {
+.pluto-banner-name { font-size: 13px; font-weight: 700; color: var(--pc); }
+
+.pluto-banner-cat-chip {
   font-size: 9.5px; font-weight: 700;
-  background: var(--pbd); color: #fff;
+  color: var(--pc); background: rgba(0,0,0,0.06);
   padding: 2px 7px; border-radius: 10px;
 }
+.pluto-banner-blocked-chip {
+  font-size: 9.5px; font-weight: 700;
+  background: var(--pbd); color: #fff;
+  padding: 2px 8px; border-radius: 10px;
+  letter-spacing: 0.1px;
+}
 
-.pluto-banner-trust {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 7px; font-size: 10.5px; color: #64748b;
-}
-.pluto-banner-trust-track {
-  width: 80px; height: 4px;
-  background: rgba(0,0,0,0.08); border-radius: 2px; overflow: hidden;
-}
-.pluto-banner-trust-fill { height: 100%; border-radius: 2px; }
-
-.pluto-banner-detail {
-  font-size: 12px; color: #374151; line-height: 1.55;
-}
+.pluto-banner-detail { font-size: 12px; color: #374151; line-height: 1.55; }
 .pluto-banner-source {
   margin-top: 5px; font-size: 10.5px; color: #9ca3af; font-style: italic;
 }
 
 .pluto-banner-close {
+  display: flex; align-items: flex-start;
   background: none; border: none; cursor: pointer;
-  color: #9ca3af; font-size: 13px;
-  padding: 12px 14px; flex-shrink: 0;
-  transition: color 0.12s, background 0.12s;
-  align-self: flex-start;
+  color: #9ca3af; padding: 13px 14px; flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+  border-radius: 0 8px 8px 0;
 }
-.pluto-banner-close:hover { color: #374151; }
+.pluto-banner-close:hover { color: #374151; background: rgba(0,0,0,0.05); }
 
 @media (prefers-color-scheme: dark) {
-  #pluto-profile-banner { border-bottom-color: rgba(255,255,255,0.07); }
+  #pluto-profile-banner { border-bottom-color: rgba(255,255,255,0.06); }
   .pluto-banner-detail  { color: #cbd5e1; }
-  .pluto-banner-source  { color: #64748b; }
-  .pluto-banner-cat     { background: rgba(255,255,255,0.08); }
-  .pluto-banner-close:hover { color: #f1f5f9; }
+  .pluto-banner-source  { color: #475569; }
+  .pluto-banner-cat-chip { background: rgba(255,255,255,0.1); }
+  .pluto-banner-close:hover { color: #e2e8f0; background: rgba(255,255,255,0.06); }
 }
 
-/* ── Tweet highlight mode ───────────────────────────────────── */
+/* ── Tweet highlight mode ────────────────────────────────── */
 
 article.pluto-highlighted {
   background: var(--phc) !important;
@@ -242,64 +254,131 @@ article.pluto-highlighted {
   padding-left: 2px;
 }
 
-/* ── Tweet block overlay ────────────────────────────────────── */
+/* ── Tweet block overlay ─────────────────────────────────── */
 
 article.pluto-blocked {
-  position: relative; isolation: isolate; overflow: hidden;
-  border-radius: 6px;
+  position: relative; isolation: isolate;
+  overflow: hidden; border-radius: 6px;
 }
 article.pluto-blocked > *:not(.pluto-block-overlay) {
-  filter: blur(7px);
-  user-select: none; pointer-events: none; opacity: 0.45;
+  filter: blur(8px);
+  user-select: none; pointer-events: none; opacity: 0.4;
 }
 
 .pluto-block-overlay {
   position: absolute; inset: 0; z-index: 20;
   display: flex; align-items: center; justify-content: center;
-  padding: 14px;
-  background: color-mix(in srgb, var(--pb) 82%, white 18%);
+  padding: 12px 16px;
+  background: color-mix(in srgb, var(--pb) 80%, white 20%);
+  animation: pluto-overlay-in 0.25s cubic-bezier(.22,1,.36,1) both;
+  transition: opacity 0.2s;
 }
+.pluto-block-overlay.pbo-out { opacity: 0; }
 
-.pbo-card {
+.pbo-inner {
   display: flex; align-items: center; gap: 12px;
   background: #fff;
   border: 1.5px solid var(--pbd);
-  border-radius: 14px;
-  padding: 12px 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  border-radius: 16px;
+  padding: 13px 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.13), 0 1px 3px rgba(0,0,0,0.07);
   max-width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
-.pbo-icon {
-  font-size: 22px; color: var(--pbd); flex-shrink: 0;
-  width: 36px; height: 36px; border-radius: 9px;
-  background: var(--pb);
+
+.pbo-icon-ring {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  background: var(--pb); color: var(--pc);
   display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--pbd);
 }
+.pbo-icon-ring svg { width: 18px; height: 18px; }
+
 .pbo-body { flex: 1; min-width: 0; }
-.pbo-title {
+.pbo-label {
   font-size: 12px; font-weight: 700; color: var(--pc);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.pbo-handle { font-size: 10.5px; color: #9ca3af; margin-top: 1px; }
+.pbo-handle { font-size: 10.5px; color: #9ca3af; margin: 1px 0 3px; }
 .pbo-detail {
-  font-size: 11px; color: #6b7280; line-height: 1.4; margin-top: 3px;
+  font-size: 11px; color: #6b7280; line-height: 1.45;
   display: -webkit-box; -webkit-line-clamp: 2;
   -webkit-box-orient: vertical; overflow: hidden;
 }
-.pbo-reveal {
+
+.pbo-btn {
   flex-shrink: 0;
-  background: #fff; border: 1.5px solid var(--pbd);
+  background: var(--pb); border: 1.5px solid var(--pbd);
   color: var(--pc); font-size: 11.5px; font-weight: 700;
-  padding: 6px 14px; border-radius: 20px; cursor: pointer;
+  padding: 7px 15px; border-radius: 20px; cursor: pointer;
   font-family: inherit;
-  transition: background 0.12s, color 0.12s;
+  transition: background 0.14s, color 0.14s;
   white-space: nowrap;
 }
-.pbo-reveal:hover { background: var(--pbd); color: #fff; }
+.pbo-btn:hover { background: var(--pbd); color: #fff; }
 
 @media (prefers-color-scheme: dark) {
-  .pbo-card    { background: #1e293b; border-color: var(--pbd); }
-  .pbo-detail  { color: #94a3b8; }
-  .pbo-reveal  { background: #1e293b; }
+  .pbo-inner  { background: #1e293b; }
+  .pbo-detail { color: #94a3b8; }
+  .pbo-btn    { background: #1e293b; }
 }
+
+/* ── Tweet "···" menu item ───────────────────────────────── */
+
+.pluto-menu-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px;
+  cursor: pointer;
+  transition: background 0.12s;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: inherit;
+}
+.pluto-menu-item:hover { background: rgba(124,58,237,0.07); }
+.pluto-menu-item:focus-visible { outline: 2px solid rgba(124,58,237,0.5); outline-offset: -2px; }
+
+.pluto-menu-icon {
+  width: 20px; height: 20px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.pluto-menu-text {
+  font-size: 15px; font-weight: 400; color: inherit;
+}
+
+.pluto-menu-divider {
+  height: 1px; background: rgba(0,0,0,0.08);
+  margin: 4px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pluto-menu-item:hover { background: rgba(167,139,250,0.1); }
+  .pluto-menu-divider { background: rgba(255,255,255,0.08); }
+}
+
+/* ── Toast notification ──────────────────────────────────── */
+
+.pluto-toast {
+  position: fixed; bottom: 22px; right: 22px; z-index: 999999;
+  display: flex; align-items: center; gap: 10px;
+  background: #0d1117;
+  border: 1px solid rgba(124,58,237,0.35);
+  border-radius: 14px;
+  padding: 11px 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(124,58,237,0.1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-width: 220px; max-width: 320px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.25s cubic-bezier(.22,1,.36,1),
+              transform 0.25s cubic-bezier(.22,1,.36,1);
+  pointer-events: none;
+}
+.pluto-toast.pluto-toast-show {
+  opacity: 1; transform: translateY(0);
+}
+.pluto-toast-icon {
+  flex-shrink: 0; display: flex; align-items: center;
+}
+.pluto-toast-text {
+  flex: 1; display: flex; flex-direction: column; gap: 2px;
+}
+.pluto-toast-main { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
+.pluto-toast-sub  { font-size: 11px; color: #64748b; }

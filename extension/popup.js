@@ -62,11 +62,6 @@
     "satire":           { color: "#1d4ed8", bg: "#eff6ff", dot: "#3b82f6" }
   };
 
-  function trustColor(n) {
-    if (n === undefined || n === null) return "#9ca3af";
-    return n < 30 ? "#ef4444" : n < 55 ? "#f59e0b" : "#22c55e";
-  }
-
   function flag(code) {
     return [...code.toUpperCase()].map(c =>
       String.fromCodePoint(c.codePointAt(0) + 127397)
@@ -121,23 +116,13 @@
         const style   = CAT_STYLE[acc.category] || { color: "#555", bg: "#f5f5f5", dot: "#999" };
         const shortL  = CAT_SHORT[acc.category] || acc.category;
         const custom  = customSet.has(h);
-        const trust   = acc.trust ?? null;
 
         const row = document.createElement("div");
         row.className = "acc-item" + (off ? " disabled" : "");
 
-        const trustHTML = trust !== null && acc.category !== "satire"
-          ? `<div class="trust-bar-mini">
-               <div class="trust-track-mini">
-                 <div class="trust-fill-mini" style="width:${trust}%;background:${trustColor(trust)}"></div>
-               </div>
-             </div>`
-          : "";
-
         row.innerHTML = `
           <span class="acc-dot" style="background:${off ? "#d1d5db" : style.dot}"></span>
           <span class="acc-handle">@${acc.handle}${acc.country ? " " + flag(acc.country) : ""}</span>
-          ${trustHTML}
           <span class="acc-cat-chip" style="color:${style.color};background:${style.bg};border-color:${style.color}">${shortL}</span>
           ${blocked && !off ? '<span class="blocked-dot" title="Content blocked by default"></span>' : ""}
           <div class="acc-actions">
