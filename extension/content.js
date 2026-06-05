@@ -236,12 +236,26 @@
     const footer = document.getElementById("pluto-panel-footer");
     if (!list) return;
     list.innerHTML = "";
+
+    const attachRescan = (btn) => {
+      btn?.addEventListener("click", () => {
+        document.querySelectorAll('article[data-testid="tweet"]').forEach(a => {
+          delete a.dataset.plutoTweet;
+        });
+        scan(document.body);
+        setTimeout(renderPanel, 300);
+      });
+    };
+
     if (pageFlags.size === 0) {
-      list.innerHTML = `<div class="pp-empty">No flagged accounts seen yet</div>`;
-      if (footer) footer.textContent = "";
+      list.innerHTML = `<div class="pp-empty">No flagged accounts visible yet.<br>Scroll to scan more tweets.</div>`;
+      if (footer) {
+        footer.innerHTML = `<span></span><button class="pp-rescan-btn">↺ Rescan</button>`;
+        attachRescan(footer.querySelector(".pp-rescan-btn"));
+      }
       return;
     }
-    if (footer) footer.textContent = `${pageFlags.size} flagged account${pageFlags.size !== 1 ? "s" : ""} on this page`;
+
     for (const [, account] of pageFlags) {
       const c   = cat(account);
       const row = document.createElement("div");
@@ -252,6 +266,11 @@
         <span class="pp-chip" style="color:${c.color};background:${c.bgColor};border-color:${c.borderColor}">${c.label}</span>
       `;
       list.appendChild(row);
+    }
+
+    if (footer) {
+      footer.innerHTML = `<span>${pageFlags.size} flagged visible</span><button class="pp-rescan-btn">↺ Rescan</button>`;
+      attachRescan(footer.querySelector(".pp-rescan-btn"));
     }
   }
 
@@ -271,22 +290,32 @@
         <span class="psw-pill pluto-pill-hide" id="pluto-pill"></span>
       </div>
       <div class="pluto-panel" id="${PANEL_ID}">
-        <div class="pp-header">Flagged on this page</div>
+        <div class="pp-header"><span>Flagged on this page</span><span class="pp-shortcut">Alt+P</span></div>
         <div class="pp-list" id="pluto-panel-list"></div>
         <div class="pp-footer" id="pluto-panel-footer"></div>
       </div>
     `;
 
-    el.querySelector("#pluto-wrap").addEventListener("click", () => {
-      const panel = document.getElementById(PANEL_ID);
-      if (!panel) return;
-      const opening = !panel.classList.contains("pp-open");
-      panel.classList.toggle("pp-open", opening);
-      if (opening) renderPanel();
-    });
+    el.querySelector("#pluto-wrap").addEventListener("click", togglePanel);
 
     return el;
   }
+
+  function togglePanel() {
+    const panel = document.getElementById(PANEL_ID);
+    if (!panel) return;
+    const opening = !panel.classList.contains("pp-open");
+    panel.classList.toggle("pp-open", opening);
+    if (opening) renderPanel();
+  }
+
+  // Alt+P keyboard shortcut to toggle the panel
+  document.addEventListener("keydown", e => {
+    if (e.altKey && !e.ctrlKey && !e.metaKey && e.key.toLowerCase() === "p") {
+      e.preventDefault();
+      togglePanel();
+    }
+  }, true);
 
   function updateSidebarCount() {
     const pill = document.getElementById("pluto-pill");
@@ -317,14 +346,17 @@
     if (document.getElementById(SIDEBAR_ID)) return;
 
     const sideNav =
-      document.querySelector('[data-testid="SideNav"]') ||
-      document.querySelector("header[role=banner]")     ||
-      document.querySelector('nav[aria-label="Primary"]');
+      document.querySelector('[data-testid="SideNav"]')    ||
+      document.querySelector('[data-testid="AppTabBar"]')  ||
+      document.querySelector("header[role=banner]")        ||
+      document.querySelector('nav[aria-label="Primary"]')  ||
+      document.querySelector('nav[role="navigation"]');
     if (!sideNav) return;
 
     const logoLink =
       sideNav.querySelector('a[href="/home"] svg')?.closest("a") ||
       sideNav.querySelector('a[aria-label="X"]')                 ||
+      sideNav.querySelector('a[aria-label="Home"]')              ||
       sideNav.querySelector('a[href="/"]');
 
     const widget = makeSidebarWidget();
@@ -332,13 +364,19 @@
       const block = logoLink.closest("li, div[class]") || logoLink.parentElement;
       block.insertAdjacentElement("afterend", widget);
     } else {
-      sideNav.prepend(widget);
+      const firstLink = sideNav.querySelector("a[href]");
+      if (firstLink) {
+        const block = firstLink.closest("li, div[class]") || firstLink.parentElement;
+        block.insertAdjacentElement("afterend", widget);
+      } else {
+        sideNav.prepend(widget);
+      }
     }
     updateSidebarCount();
   }
 
-  // Keep widget alive across Twitter's SPA re-renders
-  setInterval(injectSidebarWidget, 1500);
+  // Keep widget alive — 700ms catches faster SPA re-renders
+  setInterval(injectSidebarWidget, 700);
 
   // ── Badge ──────────────────────────────────────────────────────────────────────
 
@@ -590,7 +628,8 @@
     pageFlags.clear();
     sessionCount = 0;
     updateSidebarCount();
-    setTimeout(() => scan(document.body), 900);
+    // Cascade retries — Twitter SPA nav mounts at unpredictable times after navigation
+    [200, 600, 1200, 2500].forEach(delay => setTimeout(() => scan(document.body), delay));
   }).observe(document, { subtree: true, childList: true });
 
   chrome.storage.onChanged.addListener(() => {

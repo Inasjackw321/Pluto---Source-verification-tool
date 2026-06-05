@@ -122,6 +122,12 @@
   font-size: 9.5px; font-weight: 700; letter-spacing: 0.55px;
   color: #64748b; text-transform: uppercase;
   border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.pp-shortcut {
+  font-size: 9px; font-weight: 500; letter-spacing: 0;
+  background: rgba(255,255,255,0.06); border-radius: 4px;
+  padding: 1px 5px; color: #475569; text-transform: none;
 }
 .pp-list { max-height: 180px; overflow-y: auto; }
 .pp-row {
@@ -148,15 +154,23 @@
   padding: 7px 12px;
   font-size: 10px; color: #475569;
   border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
 }
+.pp-rescan-btn {
+  background: none; border: 1px solid rgba(124,58,237,0.3);
+  color: #a78bfa; font-size: 9.5px; font-weight: 600;
+  padding: 2px 7px; border-radius: 6px; cursor: pointer;
+  font-family: inherit; transition: background 0.12s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.pp-rescan-btn:hover { background: rgba(124,58,237,0.1); }
 
-@media (prefers-color-scheme: dark) {
-  .psw-name  { color: #f1f5f9; }
-  .psw-sub   { color: #a78bfa; }
-  .psw-beta  { color: #a78bfa; border-color: rgba(167,139,250,0.4); }
-  .psw-wrap:hover  { background: rgba(167,139,250,0.1); }
-  .psw-wrap:active { background: rgba(167,139,250,0.18); }
-}
+/* Twitter dark mode — Twitter sets class="dark" on <html> */
+html.dark .psw-name  { color: #f1f5f9; }
+html.dark .psw-sub   { color: #a78bfa; }
+html.dark .psw-beta  { color: #a78bfa; border-color: rgba(167,139,250,0.4); }
+html.dark .psw-wrap:hover  { background: rgba(167,139,250,0.1); }
+html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
 
 /* ── Inline badge ────────────────────────────────────────── */
 
@@ -246,9 +260,7 @@
   pointer-events: none;
   animation: pluto-badge-in 0.3s 0.15s cubic-bezier(.22,1,.36,1) both;
 }
-@media (prefers-color-scheme: dark) {
-  .pluto-avatar-dot { border-color: #000; }
-}
+html.dark .pluto-avatar-dot { border-color: #000; }
 
 /* ── Profile banner ──────────────────────────────────────── */
 
@@ -323,14 +335,12 @@
 }
 .pluto-banner-close:hover { color: #374151; }
 
-@media (prefers-color-scheme: dark) {
-  #pluto-profile-banner { border-bottom-color: rgba(255,255,255,0.06); }
-  .pluto-banner-detail  { color: #94a3b8; }
-  .pluto-banner-source  { color: #475569; }
-  .pluto-banner-cat-chip { background: rgba(255,255,255,0.1); }
-  .pluto-banner-close:hover { color: #e2e8f0; }
-  .pluto-banner-trust { color: #4ade80; }
-}
+html.dark #pluto-profile-banner { border-bottom-color: rgba(255,255,255,0.06); }
+html.dark .pluto-banner-detail  { color: #94a3b8; }
+html.dark .pluto-banner-source  { color: #475569; }
+html.dark .pluto-banner-cat-chip { background: rgba(255,255,255,0.1); }
+html.dark .pluto-banner-close:hover { color: #e2e8f0; }
+html.dark .pluto-banner-trust { color: #4ade80; }
 
 /* ── Tweet highlight mode ────────────────────────────────── */
 
@@ -403,11 +413,9 @@ article.pluto-blocked > *:not(.pluto-block-overlay) {
 }
 .pbo-btn:hover { background: var(--pbd); color: #fff; }
 
-@media (prefers-color-scheme: dark) {
-  .pbo-inner  { background: #1e293b; }
-  .pbo-detail { color: #94a3b8; }
-  .pbo-btn    { background: #1e293b; }
-}
+html.dark .pbo-inner  { background: #1e293b; }
+html.dark .pbo-detail { color: #94a3b8; }
+html.dark .pbo-btn    { background: #1e293b; }
 
 /* ── Tweet "···" menu item ───────────────────────────────── */
 
@@ -435,10 +443,8 @@ article.pluto-blocked > *:not(.pluto-block-overlay) {
   margin: 4px 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .pluto-menu-item:hover { background: rgba(167,139,250,0.1); }
-  .pluto-menu-divider { background: rgba(255,255,255,0.08); }
-}
+html.dark .pluto-menu-item:hover { background: rgba(167,139,250,0.1); }
+html.dark .pluto-menu-divider { background: rgba(255,255,255,0.08); }
 
 /* ── Toast notification ──────────────────────────────────── */
 
