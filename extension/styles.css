@@ -1,45 +1,72 @@
-/* Mediacheck badge */
+/* ── Inline badge ──────────────────────────────────────────────────────────── */
+
 .mc-badge {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: 3px;
   margin-left: 6px;
-  padding: 1px 6px;
-  border-radius: 4px;
+  padding: 2px 7px 2px 5px;
+  border-radius: 20px;
   font-size: 11px;
-  font-weight: 600;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  line-height: 1.6;
+  font-weight: 700;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
   cursor: default;
   vertical-align: middle;
   white-space: nowrap;
   user-select: none;
-  z-index: 1;
+  transition: opacity 0.15s;
+  letter-spacing: 0.2px;
+  border: 1.5px solid currentColor;
 }
 
-/* Tooltip */
+.mc-badge.mc-cat-state-affiliated {
+  background: #fff0e0;
+  color: #b84c00;
+}
+.mc-badge.mc-cat-misinformation {
+  background: #fce8e8;
+  color: #b71c1c;
+}
+.mc-badge.mc-cat-satire {
+  background: #e8f0fe;
+  color: #1a6bb5;
+}
+
+.mc-badge-icon { font-size: 10px; }
+.mc-badge-text { font-size: 10.5px; }
+.mc-badge-chevron {
+  font-size: 13px;
+  opacity: 0.45;
+  margin-left: 1px;
+  font-weight: 400;
+}
+
+/* ── Tooltip ───────────────────────────────────────────────────────────────── */
+
 .mc-tooltip {
   display: none;
   position: absolute;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  width: 220px;
-  background: #1c1c1e;
-  color: #f5f5f5;
-  font-size: 12px;
+  width: 260px;
+  background: #111;
+  color: #f0f0f0;
+  font-size: 12.5px;
   font-weight: 400;
-  line-height: 1.45;
-  padding: 8px 10px;
-  border-radius: 6px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 10px 12px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
   white-space: normal;
-  z-index: 9999;
+  z-index: 99999;
+  pointer-events: none;
+  line-height: 1.5;
+  text-align: left;
 }
 
-/* Tooltip arrow */
 .mc-tooltip::after {
   content: "";
   position: absolute;
@@ -47,21 +74,196 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: #1c1c1e;
+  border-top-color: #111;
 }
 
-.mc-badge:hover .mc-tooltip {
-  display: block;
+.mc-badge:hover .mc-tooltip { display: block; }
+
+.mc-tip-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.mc-tip-icon { font-size: 13px; }
+.mc-tip-label { color: #fff; }
+.mc-tip-body { color: #d4d4d4; line-height: 1.5; font-size: 12px; }
+.mc-tip-source {
+  margin-top: 7px;
+  font-size: 10.5px;
+  color: #888;
+  font-style: italic;
 }
 
-/* Ensure badges inside dark-mode Twitter look fine */
-[data-theme="dark"] .mc-tooltip,
-.dark .mc-tooltip {
-  background: #e8e8e8;
-  color: #111;
+/* ── Profile page banner ───────────────────────────────────────────────────── */
+
+#mc-profile-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--mc-bg, #fff0e0);
+  border-left: 4px solid var(--mc-accent, #e07030);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  position: relative;
+  z-index: 10;
 }
 
-[data-theme="dark"] .mc-tooltip::after,
-.dark .mc-tooltip::after {
-  border-top-color: #e8e8e8;
+.mc-banner-left {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--mc-accent, #e07030);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #fff;
+  margin-top: 1px;
+}
+
+.mc-banner-body { flex: 1; min-width: 0; }
+
+.mc-banner-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--mc-color, #b84c00);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.mc-banner-blocked-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  background: var(--mc-accent, #e07030);
+  color: #fff;
+  padding: 1px 7px;
+  border-radius: 10px;
+  letter-spacing: 0.2px;
+}
+
+.mc-banner-detail {
+  font-size: 12.5px;
+  color: #333;
+  line-height: 1.55;
+}
+
+.mc-banner-source {
+  margin-top: 5px;
+  font-size: 11px;
+  color: #777;
+  font-style: italic;
+}
+
+.mc-banner-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.mc-banner-close:hover { background: rgba(0,0,0,0.07); color: #333; }
+
+/* ── Tweet block overlay ───────────────────────────────────────────────────── */
+
+article.mc-tweet-blocked {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+/* Blur all tweet content */
+article.mc-tweet-blocked > div {
+  filter: blur(5px);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* The overlay sits on top, unblurred */
+.mc-block-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mc-bg, #fce8e8) 95%, transparent),
+    color-mix(in srgb, var(--mc-bg, #fce8e8) 80%, transparent)
+  );
+  border-left: 4px solid var(--mc-accent, #e53935);
+  backdrop-filter: blur(2px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  flex-wrap: wrap;
+}
+
+.mc-ov-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  color: var(--mc-accent, #e53935);
+}
+
+.mc-ov-text {
+  flex: 1;
+  min-width: 120px;
+  font-size: 12.5px;
+  color: #222;
+  line-height: 1.5;
+}
+.mc-ov-text strong { color: var(--mc-color, #b71c1c); }
+
+.mc-ov-detail {
+  font-size: 11.5px;
+  color: #555;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.mc-ov-btn {
+  flex-shrink: 0;
+  background: #fff;
+  border: 1.5px solid var(--mc-accent, #e53935);
+  color: var(--mc-color, #b71c1c);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.mc-ov-btn:hover {
+  background: var(--mc-accent, #e53935);
+  color: #fff;
+}
+
+/* ── Dark mode overrides ────────────────────────────────────────────────────── */
+
+/* Twitter adds color-scheme:dark to <html> in dark mode */
+@media (prefers-color-scheme: dark) {
+  .mc-banner-detail { color: #ccc; }
+  .mc-banner-source { color: #999; }
+  #mc-profile-banner { border-bottom-color: rgba(255,255,255,0.08); }
+  .mc-ov-text { color: #eee; }
+  .mc-ov-detail { color: #aaa; }
+  .mc-ov-btn { background: #1e1e1e; }
 }

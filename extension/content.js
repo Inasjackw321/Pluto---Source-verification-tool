@@ -1,7 +1,6 @@
 (() => {
   "use strict";
 
-  // Merged map: handle (lowercase) → account info
   let accountMap = {};
 
   function buildAccountMap(accounts) {
@@ -11,7 +10,6 @@
     }
   }
 
-  // Load accounts from storage (user overrides) merged with defaults
   function loadAccounts(cb) {
     chrome.storage.sync.get(["customAccounts", "disabledHandles"], (data) => {
       const custom = data.customAccounts || [];
@@ -24,145 +22,251 @@
     });
   }
 
-  // ── Badge creation ──────────────────────────────────────────────────────────
+  // ── Helpers ─────────────────────────────────────────────────────────────────
 
-  function makeBadge(account) {
-    const cat = MEDIACHECK_CATEGORIES[account.category] || {
-      color: "#555", icon: "⚠", bgColor: "#f5f5f5"
-    };
-    const badge = document.createElement("span");
-    badge.className = "mc-badge";
-    badge.dataset.mcHandle = account.handle.toLowerCase();
-    badge.setAttribute("aria-label", `Mediacheck: ${account.label}`);
-    badge.style.cssText = `
-      background:${cat.bgColor};
-      color:${cat.color};
-      border:1px solid ${cat.color};
-    `;
-    badge.textContent = `${cat.icon} ${account.label}`;
-
-    // Tooltip
-    const tip = document.createElement("span");
-    tip.className = "mc-tooltip";
-    tip.textContent = account.detail;
-    badge.appendChild(tip);
-
-    return badge;
-  }
-
-  // ── DOM helpers ─────────────────────────────────────────────────────────────
-
-  // Extract a Twitter handle from an <a> href like "/UserName" or "/UserName/status/…"
   function handleFromHref(href) {
     if (!href) return null;
     const m = href.match(/^\/([A-Za-z0-9_]{1,50})(?:\/|$)/);
     return m ? m[1].toLowerCase() : null;
   }
 
-  // Mark a container so we don't badge it twice
-  const ATTR = "data-mc-done";
-
-  // Inject a badge after `anchorEl` if the account is flagged and not already badged
-  function tryInjectAfter(anchorEl, handle) {
-    const account = accountMap[handle];
-    if (!account) return;
-
-    // Walk up to find a suitable parent that doesn't already have our badge
-    const parent = anchorEl.parentElement;
-    if (!parent) return;
-    if (parent.querySelector(`.mc-badge[data-mc-handle="${handle}"]`)) return;
-
-    const badge = makeBadge(account);
-    anchorEl.insertAdjacentElement("afterend", badge);
+  function getCat(account) {
+    return MEDIACHECK_CATEGORIES[account.category] || {
+      color: "#555", icon: "⚠", bgColor: "#f5f5f5", borderColor: "#999"
+    };
   }
 
-  // ── Scanning logic ──────────────────────────────────────────────────────────
+  // ── Inline badge (used in tweet headers and sidebars) ────────────────────────
 
-  // Twitter renders several patterns; we cover the most common three:
-  //  1. [data-testid="User-Name"]  — within a tweet, shows "@handle" links
-  //  2. [data-testid="UserCell"]   — in sidebars / who-to-follow
-  //  3. Profile header              — [data-testid="UserProfileHeader_Items"]
+  function makeBadge(account) {
+    const cat = getCat(account);
+    const badge = document.createElement("span");
+    badge.className = `mc-badge mc-cat-${account.category}`;
+    badge.dataset.mcHandle = account.handle.toLowerCase();
+    badge.setAttribute("role", "img");
+    badge.setAttribute("aria-label", `Mediacheck warning: ${account.label}`);
 
-  function scanUserNameBlock(el) {
-    // The User-Name block contains two <a> tags: display name and @handle.
-    // We want the @handle link (href="/username").
-    const links = el.querySelectorAll("a[href]");
+    badge.innerHTML = `
+      <span class="mc-badge-icon">${cat.icon}</span>
+      <span class="mc-badge-text">${account.label}</span>
+      <span class="mc-badge-chevron">›</span>
+    `;
+
+    const tip = document.createElement("div");
+    tip.className = "mc-tooltip";
+    tip.innerHTML = `
+      <div class="mc-tip-head">
+        <span class="mc-tip-icon">${cat.icon}</span>
+        <span class="mc-tip-label">${account.label}</span>
+      </div>
+      <div class="mc-tip-body">${account.detail}</div>
+      ${account.source ? `<div class="mc-tip-source">— ${account.source}</div>` : ""}
+    `;
+    badge.appendChild(tip);
+
+    return badge;
+  }
+
+  // ── Profile page banner ──────────────────────────────────────────────────────
+
+  function makeProfileBanner(account) {
+    const cat = getCat(account);
+    const banner = document.createElement("div");
+    banner.id = "mc-profile-banner";
+    banner.className = `mc-profile-banner mc-cat-${account.category}`;
+    banner.style.setProperty("--mc-accent", cat.borderColor);
+    banner.style.setProperty("--mc-bg", cat.bgColor);
+    banner.style.setProperty("--mc-color", cat.color);
+
+    banner.innerHTML = `
+      <div class="mc-banner-left">
+        <span class="mc-banner-icon">${cat.icon}</span>
+      </div>
+      <div class="mc-banner-body">
+        <div class="mc-banner-title">
+          ${account.label}
+          ${account.blocked ? '<span class="mc-banner-blocked-tag">Content hidden by default</span>' : ""}
+        </div>
+        <div class="mc-banner-detail">${account.detail}</div>
+        ${account.source ? `<div class="mc-banner-source">${account.source}</div>` : ""}
+      </div>
+      <button class="mc-banner-close" title="Dismiss warning" aria-label="Dismiss">✕</button>
+    `;
+
+    banner.querySelector(".mc-banner-close").addEventListener("click", () => banner.remove());
+    return banner;
+  }
+
+  // ── Tweet block overlay ──────────────────────────────────────────────────────
+
+  function makeBlockOverlay(account) {
+    const cat = getCat(account);
+    const overlay = document.createElement("div");
+    overlay.className = `mc-block-overlay mc-cat-${account.category}`;
+    overlay.style.setProperty("--mc-accent", cat.borderColor);
+    overlay.style.setProperty("--mc-bg", cat.bgColor);
+    overlay.style.setProperty("--mc-color", cat.color);
+
+    overlay.innerHTML = `
+      <div class="mc-ov-icon">${cat.icon}</div>
+      <div class="mc-ov-text">
+        <strong>@${account.handle}</strong> — ${account.label}
+        <div class="mc-ov-detail">${account.detail}</div>
+      </div>
+      <button class="mc-ov-btn">View anyway</button>
+    `;
+
+    overlay.querySelector(".mc-ov-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const article = overlay.closest("article");
+      if (article) {
+        article.classList.remove("mc-tweet-blocked");
+        article.dataset.mcRevealed = "1";
+      }
+      overlay.remove();
+    });
+
+    return overlay;
+  }
+
+  // ── Process a single tweet article ──────────────────────────────────────────
+
+  function processTweet(article) {
+    if (article.dataset.mcTweet) return;
+
+    const userNameBlock = article.querySelector('[data-testid="User-Name"]');
+    if (!userNameBlock) return;
+
+    let handle = null;
+    const links = userNameBlock.querySelectorAll("a[href]");
     for (const link of links) {
-      const handle = handleFromHref(link.getAttribute("href"));
-      if (!handle || !accountMap[handle]) continue;
-      if (el.getAttribute(ATTR) === handle) continue;
-      el.setAttribute(ATTR, handle);
-      tryInjectAfter(link, handle);
+      const h = handleFromHref(link.getAttribute("href"));
+      if (h && accountMap[h]) { handle = h; break; }
+    }
+    if (!handle) return;
+
+    article.dataset.mcTweet = handle;
+    const account = accountMap[handle];
+
+    // Badge next to @handle link
+    const handleLink = [...links].find(l => handleFromHref(l.getAttribute("href")) === handle);
+    if (handleLink) {
+      const parent = handleLink.closest('[dir]') || handleLink.parentElement;
+      if (parent && !parent.querySelector(`.mc-badge[data-mc-handle="${handle}"]`)) {
+        handleLink.insertAdjacentElement("afterend", makeBadge(account));
+      }
+    }
+
+    // Block overlay for flagged-as-blocked accounts
+    if (account.blocked && !article.dataset.mcRevealed) {
+      article.classList.add("mc-tweet-blocked");
+      if (!article.querySelector(".mc-block-overlay")) {
+        article.appendChild(makeBlockOverlay(account));
+      }
     }
   }
 
-  function scanUserCell(el) {
-    if (el.getAttribute(ATTR)) return;
-    const link = el.querySelector("a[href]");
+  // ── Process UserCell (sidebar, who-to-follow) ────────────────────────────────
+
+  function processUserCell(cell) {
+    if (cell.dataset.mcDone) return;
+    const link = cell.querySelector("a[href]");
     if (!link) return;
     const handle = handleFromHref(link.getAttribute("href"));
     if (!handle || !accountMap[handle]) return;
-    el.setAttribute(ATTR, handle);
-    // Place badge after the display-name span inside the cell
-    const nameSpan = el.querySelector("[dir='ltr'] > span") || link;
-    tryInjectAfter(nameSpan, handle);
+    cell.dataset.mcDone = handle;
+
+    const nameEl = cell.querySelector('[dir="ltr"] > span') || link;
+    if (!nameEl.parentElement.querySelector(`.mc-badge[data-mc-handle="${handle}"]`)) {
+      nameEl.insertAdjacentElement("afterend", makeBadge(accountMap[handle]));
+    }
   }
 
-  function scanProfileHeader(el) {
-    if (el.getAttribute(ATTR)) return;
-    // The page URL itself reveals the profile handle
-    const handle = window.location.pathname.replace(/^\//, "").split("/")[0].toLowerCase();
-    if (!handle || !accountMap[handle]) return;
-    el.setAttribute(ATTR, handle);
-    const inner = el.querySelector("span") || el;
-    tryInjectAfter(inner, handle);
+  // ── Profile page banner injection ────────────────────────────────────────────
+
+  const NON_PROFILE_PATHS = new Set([
+    "home", "explore", "notifications", "messages",
+    "settings", "i", "search", "compose", "bookmarks"
+  ]);
+
+  function tryInjectProfileBanner() {
+    if (document.getElementById("mc-profile-banner")) return;
+
+    const parts = window.location.pathname.split("/").filter(Boolean);
+    if (!parts.length || NON_PROFILE_PATHS.has(parts[0])) return;
+
+    const handle = parts[0].toLowerCase();
+    const account = accountMap[handle];
+    if (!account) return;
+
+    // Try several insertion points, from most to least specific
+    const tabList   = document.querySelector('[role="tablist"]');
+    const headerItems = document.querySelector('[data-testid="UserProfileHeader_Items"]');
+    const description = document.querySelector('[data-testid="UserDescription"]');
+    const primaryCol  = document.querySelector('[data-testid="primaryColumn"]');
+
+    const banner = makeProfileBanner(account);
+
+    if (tabList) {
+      // Insert just above the Posts/Replies/Media tab row — most reliable
+      tabList.closest("nav, div")?.insertAdjacentElement("beforebegin", banner) ??
+        tabList.insertAdjacentElement("beforebegin", banner);
+    } else if (headerItems) {
+      headerItems.insertAdjacentElement("afterend", banner);
+    } else if (description) {
+      description.insertAdjacentElement("afterend", banner);
+    } else if (primaryCol) {
+      primaryCol.prepend(banner);
+    }
   }
+
+  // ── Full scan ────────────────────────────────────────────────────────────────
 
   function scanRoot(root) {
-    root.querySelectorAll("[data-testid='User-Name']").forEach(scanUserNameBlock);
-    root.querySelectorAll("[data-testid='UserCell']").forEach(scanUserCell);
-    root.querySelectorAll("[data-testid='UserProfileHeader_Items']").forEach(scanProfileHeader);
+    if (root.querySelectorAll) {
+      root.querySelectorAll('article[data-testid="tweet"]').forEach(processTweet);
+      root.querySelectorAll('[data-testid="UserCell"]').forEach(processUserCell);
+    }
+    tryInjectProfileBanner();
   }
 
-  // ── MutationObserver ────────────────────────────────────────────────────────
+  // ── MutationObserver ─────────────────────────────────────────────────────────
 
-  const observer = new MutationObserver((mutations) => {
-    for (const m of mutations) {
-      for (const node of m.addedNodes) {
-        if (node.nodeType !== 1) continue;
-        scanRoot(node);
-        // Also check the node itself
-        const testId = node.dataset && node.dataset.testid;
-        if (testId === "User-Name") scanUserNameBlock(node);
-        else if (testId === "UserCell") scanUserCell(node);
-        else if (testId === "UserProfileHeader_Items") scanProfileHeader(node);
-      }
-    }
-  });
+  let scanQueued = false;
+  function queueScan() {
+    if (scanQueued) return;
+    scanQueued = true;
+    requestAnimationFrame(() => { scanQueued = false; scanRoot(document.body); });
+  }
 
-  // ── Navigation (SPA) ───────────────────────────────────────────────────────
+  const observer = new MutationObserver(queueScan);
 
-  // Twitter is a SPA; re-scan on URL changes for profile pages
+  // ── SPA navigation ────────────────────────────────────────────────────────────
+
   let lastUrl = location.href;
   new MutationObserver(() => {
     if (location.href !== lastUrl) {
       lastUrl = location.href;
-      setTimeout(() => scanRoot(document.body), 600);
+      document.getElementById("mc-profile-banner")?.remove();
+      setTimeout(() => scanRoot(document.body), 900);
     }
   }).observe(document, { subtree: true, childList: true });
 
-  // ── Listen for popup-driven account changes ─────────────────────────────────
+  // ── Storage changes (popup edits) ────────────────────────────────────────────
 
   chrome.storage.onChanged.addListener(() => {
     loadAccounts(() => {
-      // Remove stale badges and re-scan
-      document.querySelectorAll(".mc-badge").forEach(b => b.remove());
-      document.querySelectorAll(`[${ATTR}]`).forEach(el => el.removeAttribute(ATTR));
+      document.querySelectorAll(".mc-badge, .mc-block-overlay, #mc-profile-banner").forEach(e => e.remove());
+      document.querySelectorAll("[data-mc-tweet], [data-mc-done]").forEach(el => {
+        el.classList.remove("mc-tweet-blocked");
+        delete el.dataset.mcTweet;
+        delete el.dataset.mcDone;
+      });
       scanRoot(document.body);
     });
   });
 
-  // ── Init ────────────────────────────────────────────────────────────────────
+  // ── Init ─────────────────────────────────────────────────────────────────────
 
   loadAccounts(() => {
     scanRoot(document.body);

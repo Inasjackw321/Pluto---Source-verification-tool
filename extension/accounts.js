@@ -1,108 +1,122 @@
-// Default flagged accounts. Each entry: { handle, label, category, detail }
-// 'handle' is the Twitter/X username (lowercase, no @).
-// Users can add/remove accounts via the extension popup.
+// Default flagged accounts
+// blocked:true → tweet content is hidden behind an overlay by default
 
 const MEDIACHECK_DEFAULT_ACCOUNTS = [
-  // State-affiliated outlets
+  // ── Fully blocked (highest concern) ──────────────────────────────────────
   {
     handle: "rt_com",
-    label: "State Media",
+    label: "Russian State Media",
     category: "state-affiliated",
-    detail: "RT is funded by the Russian government and listed as a foreign agent in multiple countries."
-  },
-  {
-    handle: "rt_america",
-    label: "State Media",
-    category: "state-affiliated",
-    detail: "RT America — Russian state-funded broadcaster."
-  },
-  {
-    handle: "xinhua_world",
-    label: "State Media",
-    category: "state-affiliated",
-    detail: "Xinhua is the official state news agency of the People's Republic of China."
-  },
-  {
-    handle: "cgtnofficial",
-    label: "State Media",
-    category: "state-affiliated",
-    detail: "CGTN is a Chinese state-owned international television network."
-  },
-  {
-    handle: "tass_agency",
-    label: "State Media",
-    category: "state-affiliated",
-    detail: "TASS is the official Russian state news agency."
-  },
-  {
-    handle: "rianovosti",
-    label: "State Media",
-    category: "state-affiliated",
-    detail: "RIA Novosti is a Russian state-owned news agency."
-  },
-  {
-    handle: "sptnkne",
-    label: "State Media",
-    category: "state-affiliated",
-    detail: "Sputnik is a Russian state-owned international news agency."
-  },
-  {
-    handle: "pressturkiye",
-    label: "State Media",
-    category: "state-affiliated",
-    detail: "TRT World — Turkish state broadcaster."
-  },
-  {
-    handle: "trtworld",
-    label: "State Media",
-    category: "state-affiliated",
-    detail: "TRT World is funded by the Turkish government."
+    blocked: true,
+    detail: "RT (formerly Russia Today) is funded by the Russian federal budget and registered as a foreign agent in the US, UK, and EU. Banned from broadcasting in the UK and EU during the 2022 Ukraine invasion.",
+    source: "Foreign Agents Registration Act · Ofcom · European Commission"
   },
   {
     handle: "presstv",
-    label: "State Media",
+    label: "Iranian State Media",
     category: "state-affiliated",
-    detail: "Press TV is an Iranian state-owned English-language news network."
+    blocked: true,
+    detail: "Press TV is owned and operated by the Islamic Republic of Iran Broadcasting (IRIB), a state body under the Supreme Leader. Banned from UK and EU satellite platforms.",
+    source: "Ofcom (UK) · EBU"
+  },
+  {
+    handle: "sptnkne",
+    label: "Russian State Media",
+    category: "state-affiliated",
+    blocked: true,
+    detail: "Sputnik is a Russian state-owned international news agency and radio broadcast service. Registered as a foreign agent in multiple countries; EU distribution banned since March 2022.",
+    source: "EU Regulation 2022/350 · FARA"
   },
   {
     handle: "khamenei_ir",
-    label: "State Official",
+    label: "Iranian Supreme Leader",
     category: "state-affiliated",
-    detail: "Official account of Iran's Supreme Leader."
+    blocked: true,
+    detail: "Official account of Ali Khamenei, Iran's Supreme Leader. Posts are state-directed messaging from the highest level of the Iranian government.",
+    source: "Islamic Republic of Iran"
   },
 
-  // Accounts with documented misinformation flags
+  // ── Flagged (warned, not blocked) ─────────────────────────────────────────
+  {
+    handle: "tass_agency",
+    label: "Russian State Media",
+    category: "state-affiliated",
+    blocked: false,
+    detail: "TASS is the official Russian state news agency, directly subordinate to the Russian government. Its war coverage is subject to mandatory state directives.",
+    source: "TASS charter · Russian federal law"
+  },
+  {
+    handle: "rianovosti",
+    label: "Russian State Media",
+    category: "state-affiliated",
+    blocked: false,
+    detail: "RIA Novosti is owned by the Russian state media holding Rossiya Segodnya. Banned from broadcasting in the EU since February 2022.",
+    source: "EU sanctions · Roskomnadzor"
+  },
+  {
+    handle: "xinhua_world",
+    label: "Chinese State Media",
+    category: "state-affiliated",
+    blocked: false,
+    detail: "Xinhua News Agency is the official state news agency of the People's Republic of China, under the direct authority of the State Council.",
+    source: "Chinese State Council"
+  },
+  {
+    handle: "cgtnofficial",
+    label: "Chinese State Media",
+    category: "state-affiliated",
+    blocked: false,
+    detail: "CGTN (China Global Television Network) is a branch of China Central Television (CCTV), a Chinese state broadcaster. Ofcom revoked its UK licence in 2021.",
+    source: "Ofcom Decision 2021 · NPC China"
+  },
+  {
+    handle: "trtworld",
+    label: "Turkish State Media",
+    category: "state-affiliated",
+    blocked: false,
+    detail: "TRT World is a subsidiary of TRT, the Turkish state broadcaster funded and overseen by the Turkish government.",
+    source: "TRT Charter · Turkish Radio and Television Corporation Act"
+  },
+
+  // ── Unverified / low reliability ──────────────────────────────────────────
   {
     handle: "disclosetv",
     label: "Unverified Claims",
     category: "misinformation",
-    detail: "Frequently posts unverified or contested war-related claims without sourcing."
+    blocked: false,
+    detail: "Frequently posts unverified or contested claims during breaking news events — especially around conflicts — without crediting primary sources. Content regularly removed by Twitter.",
+    source: "EU DisinfoLab · NewsGuard"
   },
   {
     handle: "warmonitors",
     label: "Unverified Claims",
     category: "misinformation",
-    detail: "Aggregates unverified footage and claims; accuracy rate is contested."
+    blocked: false,
+    detail: "Aggregates unverified footage and casualty claims from conflict zones. Accuracy of individual posts is disputed; no clear editorial policy.",
+    source: "Self-published"
   },
 
-  // Satire / parody (to reduce confusion during breaking news)
+  // ── Satire ────────────────────────────────────────────────────────────────
   {
     handle: "theonion",
     label: "Satire",
     category: "satire",
-    detail: "The Onion is a satirical publication. Content is not factual news."
+    blocked: false,
+    detail: "The Onion is a long-running satirical publication. All content is fictional and intended as comedy — not factual reporting.",
+    source: "The Onion, Inc."
   },
   {
     handle: "thebabylonbee",
     label: "Satire",
     category: "satire",
-    detail: "The Babylon Bee is a satirical publication. Content is not factual news."
+    blocked: false,
+    detail: "The Babylon Bee is a satirical publication. Content is fictional and intended as comedy — not factual reporting.",
+    source: "The Babylon Bee, LLC"
   }
 ];
 
-// Category metadata: badge colour and icon character
 const MEDIACHECK_CATEGORIES = {
-  "state-affiliated": { color: "#e05c00", icon: "⚑", bgColor: "#fff3e0" },
-  "misinformation":   { color: "#c62828", icon: "⚠", bgColor: "#ffebee" },
-  "satire":           { color: "#1565c0", icon: "﹫", bgColor: "#e3f2fd" }
+  "state-affiliated": { color: "#b84c00", icon: "⚑", bgColor: "#fff0e0", borderColor: "#e07030" },
+  "misinformation":   { color: "#b71c1c", icon: "⚠", bgColor: "#fce8e8", borderColor: "#e53935" },
+  "satire":           { color: "#1a6bb5", icon: "✎", bgColor: "#e8f0fe", borderColor: "#1a6bb5" }
 };

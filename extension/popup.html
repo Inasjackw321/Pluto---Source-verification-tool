@@ -4,139 +4,186 @@
   <meta charset="UTF-8" />
   <title>Mediacheck</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      width: 320px;
-      min-height: 400px;
-      background: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      width: 340px;
+      background: #fafafa;
       color: #111;
+      font-size: 13px;
     }
+
+    /* Header */
     header {
-      background: #1d1d1f;
+      background: #111;
       color: #fff;
-      padding: 14px 16px 10px;
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    header h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
-    header p  { font-size: 11px; color: #aaa; margin-top: 2px; }
-    section { padding: 12px 14px; border-bottom: 1px solid #eee; }
-    section h2 { font-size: 12px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+    .header-icon {
+      width: 28px; height: 28px;
+      background: #fff;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 900; color: #111;
+      flex-shrink: 0;
+    }
+    header h1 { font-size: 15px; font-weight: 700; }
+    header p  { font-size: 10.5px; color: #888; margin-top: 1px; }
 
     /* Category legend */
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-    .legend-dot {
-      width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
-    }
-
-    /* Add account form */
-    .add-row {
+    .legend {
       display: flex;
       gap: 6px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #e8e8e8;
+      background: #fff;
+      flex-wrap: wrap;
     }
+    .legend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10.5px;
+      font-weight: 600;
+      border: 1.5px solid currentColor;
+    }
+    .legend-chip.state  { color: #b84c00; background: #fff0e0; }
+    .legend-chip.misinfo { color: #b71c1c; background: #fce8e8; }
+    .legend-chip.satire { color: #1a6bb5; background: #e8f0fe; }
+
+    /* Add account */
+    .section { padding: 10px 14px; border-bottom: 1px solid #e8e8e8; background: #fff; }
+    .section-title {
+      font-size: 10px; font-weight: 700; color: #888;
+      text-transform: uppercase; letter-spacing: .6px; margin-bottom: 8px;
+    }
+    .add-row { display: flex; gap: 5px; }
     .add-row input {
-      flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 5px 8px;
-      font-size: 13px;
-      outline: none;
+      flex: 1; border: 1.5px solid #ddd; border-radius: 8px;
+      padding: 6px 9px; font-size: 12.5px; outline: none;
+      font-family: inherit; background: #f5f5f5;
+      transition: border-color 0.15s;
     }
-    .add-row input:focus { border-color: #555; }
+    .add-row input:focus { border-color: #555; background: #fff; }
+    .add-row input::placeholder { color: #aaa; }
     .add-row select {
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 5px 4px;
-      font-size: 12px;
+      border: 1.5px solid #ddd; border-radius: 8px;
+      padding: 6px 4px; font-size: 11.5px; background: #f5f5f5;
+      font-family: inherit; outline: none;
     }
-    button {
-      background: #1d1d1f;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 6px 12px;
-      font-size: 12px;
-      cursor: pointer;
-      white-space: nowrap;
+    .btn-add {
+      background: #111; color: #fff; border: none;
+      border-radius: 8px; padding: 6px 13px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      font-family: inherit; white-space: nowrap;
+      transition: background 0.15s;
     }
-    button:hover { background: #333; }
-    #addError { font-size: 11px; color: #c00; margin-top: 4px; min-height: 14px; }
+    .btn-add:hover { background: #333; }
+    #addError { font-size: 11px; color: #b71c1c; margin-top: 5px; min-height: 14px; }
 
     /* Account list */
-    #accountList { max-height: 200px; overflow-y: auto; }
+    .section.list { padding: 0; max-height: 280px; overflow-y: auto; }
+
+    .list-header {
+      position: sticky; top: 0; z-index: 1;
+      background: #fafafa;
+      padding: 8px 14px 6px;
+      font-size: 10px; font-weight: 700; color: #888;
+      text-transform: uppercase; letter-spacing: .6px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
     .acc-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 5px 0;
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
       border-bottom: 1px solid #f0f0f0;
-      font-size: 12px;
-      gap: 8px;
+      transition: background 0.1s;
     }
+    .acc-item:hover { background: #f7f7f7; }
     .acc-item:last-child { border-bottom: none; }
-    .acc-handle { font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .acc-label {
-      font-size: 10px;
-      padding: 1px 5px;
-      border-radius: 3px;
-      font-weight: 600;
-      white-space: nowrap;
+    .acc-item.disabled .acc-handle { color: #bbb; text-decoration: line-through; }
+
+    .acc-handle {
+      flex: 1; font-size: 12.5px; font-weight: 600;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .acc-toggle {
-      font-size: 10px;
-      padding: 2px 7px;
-      background: #eee;
-      color: #333;
+
+    .acc-badge {
+      font-size: 10px; padding: 2px 6px; border-radius: 10px;
+      font-weight: 700; white-space: nowrap; border: 1.5px solid currentColor;
     }
-    .acc-toggle:hover { background: #ddd; }
-    .acc-disabled .acc-handle { color: #aaa; text-decoration: line-through; }
+    .acc-badge.state  { color: #b84c00; background: #fff0e0; }
+    .acc-badge.misinfo { color: #b71c1c; background: #fce8e8; }
+    .acc-badge.satire { color: #1a6bb5; background: #e8f0fe; }
+
+    .blocked-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #b71c1c; flex-shrink: 0; title: "Blocked";
+    }
+
+    .acc-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+    .btn-sm {
+      background: #f0f0f0; border: none; border-radius: 6px;
+      padding: 3px 8px; font-size: 10.5px; font-weight: 600;
+      cursor: pointer; color: #444; font-family: inherit;
+      transition: background 0.12s;
+    }
+    .btn-sm:hover { background: #e0e0e0; }
+    .btn-sm.danger { color: #b71c1c; }
+    .btn-sm.danger:hover { background: #fce8e8; }
 
     footer {
-      padding: 8px 14px;
-      font-size: 10px;
-      color: #aaa;
-      text-align: center;
+      padding: 9px 14px;
+      font-size: 10.5px; color: #aaa; text-align: center;
+      border-top: 1px solid #e8e8e8; background: #fff;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Mediacheck</h1>
-    <p>War Summary – Twitter media warnings</p>
+    <div class="header-icon">M</div>
+    <div>
+      <h1>Mediacheck</h1>
+      <p>War Summary · Media reliability warnings</p>
+    </div>
   </header>
 
-  <section>
-    <h2>Categories</h2>
-    <div class="legend-item"><div class="legend-dot" style="background:#e05c00"></div> State-affiliated media</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#c62828"></div> Unverified / misinformation</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#1565c0"></div> Satire</div>
-  </section>
+  <div class="legend">
+    <span class="legend-chip state">⚑ State media</span>
+    <span class="legend-chip misinfo">⚠ Unverified</span>
+    <span class="legend-chip satire">✎ Satire</span>
+    <span style="font-size:10px;color:#888;align-self:center;margin-left:2px">
+      <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#b71c1c;margin-right:3px;vertical-align:middle"></span>= content hidden
+    </span>
+  </div>
 
-  <section>
-    <h2>Add account</h2>
+  <div class="section">
+    <div class="section-title">Add account</div>
     <div class="add-row">
-      <input id="handleInput" type="text" placeholder="@username" autocomplete="off" />
+      <input id="handleInput" type="text" placeholder="@username" autocomplete="off" spellcheck="false" />
       <select id="catSelect">
         <option value="state-affiliated">State media</option>
         <option value="misinformation">Unverified</option>
         <option value="satire">Satire</option>
       </select>
-      <button id="addBtn">Add</button>
+      <button class="btn-add" id="addBtn">Add</button>
     </div>
     <div id="addError"></div>
-  </section>
+  </div>
 
-  <section>
-    <h2>Flagged accounts</h2>
-    <div id="accountList">Loading…</div>
-  </section>
+  <div class="section list">
+    <div class="list-header">Flagged accounts</div>
+    <div id="accountList"></div>
+  </div>
 
-  <footer>Hover a badge on Twitter to see details.</footer>
+  <footer>Hover any badge on Twitter/X to see details.</footer>
 
   <script src="accounts.js"></script>
   <script src="popup.js"></script>
