@@ -1,37 +1,47 @@
 (() => {
   "use strict";
 
-  // ── State ───────────────────────────────────────────────────────────────────
+  // ── State ────────────────────────────────────────────────────────────────────
 
-  let accountMap = {};
+  let accountMap   = {};
+  let trustedSet   = new Set();
+  let sessionCount = 0;
+
   let settings = {
+    showSidebarWidget:   true,
     showProfileBanner:   true,
     showTweetBadge:      true,
-    showAvatarIndicator: true,
-    blockContent:        true
+    showAvatarDot:       true,
+    blockContent:        true,
+    highlightTweets:     false
   };
 
-  // ── Load ────────────────────────────────────────────────────────────────────
+  // ── Load ─────────────────────────────────────────────────────────────────────
 
   function reload(cb) {
     chrome.storage.sync.get(
-      ["customAccounts", "disabledHandles", "blockedOverrides", "settings"],
+      ["customAccounts","disabledHandles","blockedOverrides","trustedHandles","settings"],
       data => {
         if (data.settings) Object.assign(settings, data.settings);
 
-        const disabled        = new Set((data.disabledHandles || []).map(h => h.toLowerCase()));
+        trustedSet = new Set((data.trustedHandles || []).map(h => h.toLowerCase()));
+
+        const disabled        = new Set((data.disabledHandles  || []).map(h => h.toLowerCase()));
         const blockedOverride = data.blockedOverrides || {};
         const custom          = data.customAccounts   || [];
 
-        const merged = [...MEDIACHECK_DEFAULT_ACCOUNTS, ...custom].filter(
+        const merged = [...PLUTO_ACCOUNTS, ...custom].filter(
           a => !disabled.has(a.handle.toLowerCase())
         );
 
         accountMap = {};
         for (const a of merged) {
           const h = a.handle.toLowerCase();
-          const blocked = h in blockedOverride ? blockedOverride[h] : !!a.blocked;
-          accountMap[h] = { ...a, handle: h, blocked };
+          if (trustedSet.has(h)) continue;
+          accountMap[h] = {
+            ...a, handle: h,
+            blocked: h in blockedOverride ? blockedOverride[h] : !!a.blocked
+          };
         }
 
         if (cb) cb();
@@ -39,7 +49,7 @@
     );
   }
 
-  // ── Helpers ─────────────────────────────────────────────────────────────────
+  // ── Helpers ───────────────────────────────────────────────────────────────────
 
   function handleFromHref(href) {
     if (!href) return null;
@@ -47,221 +57,309 @@
     return m ? m[1].toLowerCase() : null;
   }
 
-  function getCat(account) {
-    return MEDIACHECK_CATEGORIES[account.category] || {
-      label: "Flagged", color: "#555", bgColor: "#f5f5f5",
-      borderColor: "#999", icon: "⚠"
+  function cat(account) {
+    return PLUTO_CATEGORIES[account.category] || {
+      label:"Flagged", color:"#555", bgColor:"#f5f5f5",
+      borderColor:"#999", dotColor:"#999", textIcon:"!"
     };
   }
 
-  function countDelta(n) {
-    try { chrome.runtime.sendMessage({ type: "MC_COUNT", delta: n }); } catch (_) {}
+  function flag(code) {
+    return [...code.toUpperCase()].map(c =>
+      String.fromCodePoint(c.codePointAt(0) + 127397)
+    ).join("");
   }
 
-  // ── Elements ─────────────────────────────────────────────────────────────────
+  function bumpCount(n = 1) {
+    sessionCount += n;
+    try { chrome.runtime.sendMessage({ type: "PLUTO_COUNT", delta: n }); } catch (_) {}
+    updateSidebarCount();
+  }
+
+  // ── Sidebar widget ────────────────────────────────────────────────────────────
+
+  const SIDEBAR_ID = "pluto-sidebar-widget";
+
+  function makeSidebarWidget() {
+    const el = document.createElement("div");
+    el.id = SIDEBAR_ID;
+    el.innerHTML = `
+      <div class="psw-inner">
+        <div class="psw-logo">
+          <svg width="22" height="22" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="18" cy="18" rx="17" ry="5.5" stroke="#a78bfa" stroke-width="2.2" fill="none"
+              transform="rotate(-28 18 18)" opacity="0.65"/>
+            <circle cx="18" cy="18" r="10.5" fill="#7c3aed"/>
+            <circle cx="14" cy="13" r="4" fill="#a78bfa" opacity="0.38"/>
+            <circle cx="20.5" cy="21.5" r="2.5" fill="#5b21b6" opacity="0.5"/>
+            <path d="M27.5 11 Q31 18 27.5 25" stroke="#c4b5fd" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="psw-text">
+          <span class="psw-name">Pluto</span>
+          <span class="psw-sub" id="pluto-sidebar-sub">Active</span>
+        </div>
+        <span class="psw-count" id="pluto-sidebar-count" style="display:none">0</span>
+      </div>
+    `;
+    return el;
+  }
+
+  function updateSidebarCount() {
+    const badge = document.getElementById("pluto-sidebar-count");
+    const sub   = document.getElementById("pluto-sidebar-sub");
+    if (!badge || !sub) return;
+    if (sessionCount > 0) {
+      badge.textContent = sessionCount;
+      badge.style.display = "inline-flex";
+      sub.textContent = sessionCount === 1 ? "1 flag" : `${sessionCount} flags`;
+    } else {
+      badge.style.display = "none";
+      sub.textContent = "Active";
+    }
+  }
+
+  function injectSidebarWidget() {
+    if (!settings.showSidebarWidget) return;
+    if (document.getElementById(SIDEBAR_ID)) return;
+
+    // Try several selectors Twitter uses for the left sidebar
+    const sideNav =
+      document.querySelector('[data-testid="SideNav"]') ||
+      document.querySelector('header[role="banner"]')   ||
+      document.querySelector('nav[aria-label="Primary"]');
+
+    if (!sideNav) return;
+
+    // Find the X / Twitter logo link at the top of the sidebar
+    const logoLink =
+      sideNav.querySelector('a[href="/home"] svg')?.closest("a") ||
+      sideNav.querySelector('a[aria-label="X"]')                 ||
+      sideNav.querySelector('a[href="/"]');
+
+    const widget = makeSidebarWidget();
+
+    if (logoLink) {
+      // Insert Pluto widget right after the logo link's containing block
+      const block = logoLink.closest("li, div[class]") || logoLink.parentElement;
+      block.insertAdjacentElement("afterend", widget);
+    } else {
+      sideNav.prepend(widget);
+    }
+  }
+
+  // ── Badge ──────────────────────────────────────────────────────────────────────
 
   function makeBadge(account) {
-    const cat = getCat(account);
-    const badge = document.createElement("span");
-    badge.className = `mc-badge mc-cat-${account.category}`;
-    badge.dataset.mcHandle = account.handle;
-    badge.setAttribute("role", "img");
-    badge.setAttribute("aria-label", `Mediacheck: ${cat.label}`);
-    badge.style.setProperty("--mc-color", cat.color);
-    badge.style.setProperty("--mc-bg", cat.bgColor);
-    badge.style.setProperty("--mc-border", cat.borderColor);
+    const c = cat(account);
+    const el = document.createElement("span");
+    el.className = `pluto-badge pluto-cat-${account.category}`;
+    el.dataset.plutoHandle = account.handle;
+    el.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
+    el.setAttribute("aria-label", `Pluto: ${c.label}`);
+    el.innerHTML = `<span class="pb-icon">${c.textIcon}</span><span class="pb-text">${account.label || c.label}</span>`;
 
-    badge.innerHTML = `
-      <span class="mc-badge-icon">${cat.icon}</span>
-      <span class="mc-badge-text">${account.label || cat.label}</span>
-    `;
+    // Trust meter (for non-satire)
+    const trustBar = account.category !== "satire" && typeof account.trust === "number"
+      ? `<div class="pt-trust">
+           <span class="pt-trust-label">Reliability</span>
+           <div class="pt-trust-bar"><div class="pt-trust-fill" style="width:${account.trust}%;background:${account.trust < 30 ? "#ef4444" : account.trust < 55 ? "#f59e0b" : "#22c55e"}"></div></div>
+           <span class="pt-trust-val">${account.trust}/100</span>
+         </div>`
+      : "";
 
     const tip = document.createElement("div");
-    tip.className = "mc-tooltip";
+    tip.className = "pluto-tip";
     tip.innerHTML = `
-      <div class="mc-tip-head">
-        <span class="mc-tip-icon">${cat.icon}</span>
+      <div class="pt-head">
+        <div class="pt-head-icon">${c.textIcon}</div>
         <div>
-          <div class="mc-tip-title">${account.label || cat.label}</div>
-          <div class="mc-tip-handle">@${account.handle}${account.country ? ` · ${flag(account.country)}` : ""}</div>
+          <div class="pt-head-title">${account.label || c.label}${account.country ? " " + flag(account.country) : ""}</div>
+          <div class="pt-head-handle">@${account.handle}</div>
         </div>
       </div>
-      <div class="mc-tip-body">${account.detail || ""}</div>
-      ${account.source ? `<div class="mc-tip-source">${account.source}</div>` : ""}
+      ${trustBar}
+      <div class="pt-body">${account.detail || ""}</div>
+      ${account.source ? `<div class="pt-source">${account.source}</div>` : ""}
     `;
-    badge.appendChild(tip);
-    return badge;
+    el.appendChild(tip);
+    return el;
   }
 
-  function flag(code) {
-    // Convert ISO 3166-1 alpha-2 to regional indicator emoji
-    return [...code.toUpperCase()].map(c => String.fromCodePoint(c.codePointAt(0) + 127397)).join("");
-  }
+  // ── Avatar dot ────────────────────────────────────────────────────────────────
 
   function makeAvatarDot(account) {
-    const cat = getCat(account);
+    const c = cat(account);
     const dot = document.createElement("span");
-    dot.className = `mc-avatar-dot mc-cat-${account.category}`;
-    dot.dataset.mcHandle = account.handle;
-    dot.style.setProperty("--mc-border", cat.borderColor);
-    dot.style.background = cat.borderColor;
-    dot.title = `Mediacheck: ${cat.label}`;
+    dot.className = "pluto-avatar-dot";
+    dot.dataset.plutoHandle = account.handle;
+    dot.style.background = c.dotColor;
+    dot.title = `Pluto: ${c.label}`;
     return dot;
   }
 
-  function makeProfileBanner(account) {
-    const cat = getCat(account);
-    const banner = document.createElement("div");
-    banner.id = "mc-profile-banner";
-    banner.className = `mc-profile-banner mc-cat-${account.category}`;
-    banner.style.setProperty("--mc-color",  cat.color);
-    banner.style.setProperty("--mc-bg",     cat.bgColor);
-    banner.style.setProperty("--mc-border", cat.borderColor);
+  // ── Profile banner ─────────────────────────────────────────────────────────────
 
-    const countryStr = account.country ? ` ${flag(account.country)}` : "";
+  function makeProfileBanner(account) {
+    const c = cat(account);
+    const banner = document.createElement("div");
+    banner.id = "pluto-profile-banner";
+    banner.className = `pluto-banner pluto-cat-${account.category}`;
+    banner.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
+
+    const trustBar = account.category !== "satire" && typeof account.trust === "number"
+      ? `<div class="pluto-banner-trust">
+           <span>Reliability score: ${account.trust}/100</span>
+           <div class="pluto-banner-trust-track">
+             <div class="pluto-banner-trust-fill" style="width:${account.trust}%;background:${account.trust < 30 ? "#ef4444" : account.trust < 55 ? "#f59e0b" : "#22c55e"}"></div>
+           </div>
+         </div>`
+      : "";
 
     banner.innerHTML = `
-      <div class="mc-banner-stripe"></div>
-      <div class="mc-banner-icon-wrap"><span class="mc-banner-icon">${cat.icon}</span></div>
-      <div class="mc-banner-body">
-        <div class="mc-banner-row">
-          <span class="mc-banner-title">${account.label || cat.label}${countryStr}</span>
-          ${account.blocked && settings.blockContent ? '<span class="mc-banner-chip">Content hidden by default</span>' : ""}
-          <span class="mc-banner-cat-tag">${cat.label}</span>
+      <div class="pluto-banner-bar"></div>
+      <div class="pluto-banner-icon">${c.textIcon}</div>
+      <div class="pluto-banner-body">
+        <div class="pluto-banner-top">
+          <span class="pluto-banner-name">${account.label || c.label}${account.country ? " " + flag(account.country) : ""}</span>
+          <span class="pluto-banner-cat">${c.label}</span>
+          ${account.blocked && settings.blockContent ? '<span class="pluto-banner-chip">Content hidden</span>' : ""}
         </div>
-        <div class="mc-banner-detail">${account.detail || ""}</div>
-        ${account.source ? `<div class="mc-banner-source">Source: ${account.source}</div>` : ""}
+        ${trustBar}
+        <div class="pluto-banner-detail">${account.detail || ""}</div>
+        ${account.source ? `<div class="pluto-banner-source">Source: ${account.source}</div>` : ""}
       </div>
-      <button class="mc-banner-close" aria-label="Dismiss">✕</button>
+      <button class="pluto-banner-close" aria-label="Dismiss">✕</button>
     `;
-
-    banner.querySelector(".mc-banner-close").addEventListener("click", () => banner.remove());
+    banner.querySelector(".pluto-banner-close").addEventListener("click", () => banner.remove());
     return banner;
   }
 
-  function makeBlockOverlay(account) {
-    const cat = getCat(account);
-    const ov = document.createElement("div");
-    ov.className = `mc-block-overlay mc-cat-${account.category}`;
-    ov.style.setProperty("--mc-color",  cat.color);
-    ov.style.setProperty("--mc-bg",     cat.bgColor);
-    ov.style.setProperty("--mc-border", cat.borderColor);
+  // ── Block overlay ──────────────────────────────────────────────────────────────
 
+  function makeBlockOverlay(account) {
+    const c = cat(account);
+    const ov = document.createElement("div");
+    ov.className = "pluto-block-overlay";
+    ov.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
     ov.innerHTML = `
-      <div class="mc-ov-pill">
-        <span class="mc-ov-icon">${cat.icon}</span>
-        <div class="mc-ov-info">
-          <span class="mc-ov-title">${account.label || cat.label} · @${account.handle}</span>
-          <span class="mc-ov-sub">${account.detail ? account.detail.slice(0, 120) + (account.detail.length > 120 ? "…" : "") : ""}</span>
+      <div class="pbo-card">
+        <div class="pbo-icon">${c.textIcon}</div>
+        <div class="pbo-body">
+          <div class="pbo-title">${account.label || c.label}</div>
+          <div class="pbo-handle">@${account.handle}${account.country ? " " + flag(account.country) : ""}</div>
+          <div class="pbo-detail">${(account.detail || "").slice(0, 130)}${(account.detail || "").length > 130 ? "…" : ""}</div>
         </div>
-        <button class="mc-ov-reveal">View anyway</button>
+        <button class="pbo-reveal">View anyway</button>
       </div>
     `;
-
-    ov.querySelector(".mc-ov-reveal").addEventListener("click", e => {
+    ov.querySelector(".pbo-reveal").addEventListener("click", e => {
       e.stopPropagation();
       const art = ov.closest("article");
-      if (art) { art.classList.remove("mc-tweet-blocked"); art.dataset.mcRevealed = "1"; }
+      if (art) { art.classList.remove("pluto-blocked"); art.dataset.plutoRevealed = "1"; }
       ov.remove();
     });
-
     return ov;
   }
 
-  // ── Tweet processing ─────────────────────────────────────────────────────────
+  // ── Process tweet ──────────────────────────────────────────────────────────────
 
   function processTweet(article) {
-    if (article.dataset.mcTweet) return;
+    if (article.dataset.plutoTweet) return;
 
     const userBlock = article.querySelector('[data-testid="User-Name"]');
     if (!userBlock) return;
 
     let handle = null;
     const links = userBlock.querySelectorAll("a[href]");
-    for (const link of links) {
-      const h = handleFromHref(link.getAttribute("href"));
+    for (const a of links) {
+      const h = handleFromHref(a.getAttribute("href"));
       if (h && accountMap[h]) { handle = h; break; }
     }
     if (!handle) return;
 
-    article.dataset.mcTweet = handle;
+    article.dataset.plutoTweet = handle;
     const account = accountMap[handle];
 
-    // Badge next to handle link
+    // Badge
     if (settings.showTweetBadge) {
-      const handleLink = [...links].find(l => handleFromHref(l.getAttribute("href")) === handle);
-      if (handleLink) {
-        const container = handleLink.closest("[dir]") || handleLink.parentElement;
-        if (container && !container.querySelector(`.mc-badge[data-mc-handle="${handle}"]`)) {
-          handleLink.insertAdjacentElement("afterend", makeBadge(account));
-          countDelta(1);
+      const link = [...links].find(a => handleFromHref(a.getAttribute("href")) === handle);
+      if (link) {
+        const row = link.closest("[dir]") || link.parentElement;
+        if (row && !row.querySelector(`.pluto-badge[data-pluto-handle="${handle}"]`)) {
+          link.insertAdjacentElement("afterend", makeBadge(account));
+          bumpCount();
         }
       }
     }
 
     // Avatar dot
-    if (settings.showAvatarIndicator) {
-      const avatarWrap = article.querySelector('[data-testid="Tweet-User-Avatar"]');
-      if (avatarWrap && !avatarWrap.querySelector(".mc-avatar-dot")) {
-        avatarWrap.style.position = "relative";
-        avatarWrap.appendChild(makeAvatarDot(account));
+    if (settings.showAvatarDot) {
+      const av = article.querySelector('[data-testid="Tweet-User-Avatar"]');
+      if (av && !av.querySelector(".pluto-avatar-dot")) {
+        av.style.position = "relative";
+        av.appendChild(makeAvatarDot(account));
       }
     }
 
-    // Content blocking
-    if (settings.blockContent && account.blocked && !article.dataset.mcRevealed) {
-      article.classList.add("mc-tweet-blocked");
-      if (!article.querySelector(".mc-block-overlay")) {
+    // Highlight tweet row
+    if (settings.highlightTweets && !account.blocked) {
+      const c = cat(account);
+      article.style.setProperty("--phc", c.bgColor);
+      article.style.setProperty("--phb", c.borderColor);
+      article.classList.add("pluto-highlighted");
+    }
+
+    // Block overlay
+    if (settings.blockContent && account.blocked && !article.dataset.plutoRevealed) {
+      article.classList.add("pluto-blocked");
+      if (!article.querySelector(".pluto-block-overlay")) {
         article.appendChild(makeBlockOverlay(account));
       }
     }
   }
 
-  // ── Sidebar user cells ───────────────────────────────────────────────────────
+  // ── User cells (sidebar, who-to-follow) ───────────────────────────────────────
 
   function processUserCell(cell) {
-    if (cell.dataset.mcDone) return;
+    if (cell.dataset.plutoDone) return;
     const link = cell.querySelector("a[href]");
     if (!link) return;
     const handle = handleFromHref(link.getAttribute("href"));
     if (!handle || !accountMap[handle]) return;
-    cell.dataset.mcDone = handle;
-
-    if (settings.showTweetBadge) {
-      const nameEl = cell.querySelector('[dir="ltr"] span') || link;
-      if (!nameEl.parentElement?.querySelector(`.mc-badge[data-mc-handle="${handle}"]`)) {
-        nameEl.insertAdjacentElement("afterend", makeBadge(accountMap[handle]));
-      }
+    cell.dataset.plutoDone = handle;
+    if (!settings.showTweetBadge) return;
+    const nameEl = cell.querySelector('[dir="ltr"] span') || link;
+    if (!nameEl.parentElement?.querySelector(`.pluto-badge[data-pluto-handle="${handle}"]`)) {
+      nameEl.insertAdjacentElement("afterend", makeBadge(accountMap[handle]));
     }
   }
 
-  // ── Profile banner ───────────────────────────────────────────────────────────
+  // ── Profile banner ─────────────────────────────────────────────────────────────
 
   const NON_PROFILE = new Set([
-    "home", "explore", "notifications", "messages",
-    "settings", "i", "search", "compose", "bookmarks", "lists"
+    "home","explore","notifications","messages",
+    "settings","i","search","compose","bookmarks","lists"
   ]);
 
   function tryProfileBanner() {
     if (!settings.showProfileBanner) return;
-    if (document.getElementById("mc-profile-banner")) return;
+    if (document.getElementById("pluto-profile-banner")) return;
 
     const parts = window.location.pathname.split("/").filter(Boolean);
     if (!parts.length || NON_PROFILE.has(parts[0].toLowerCase())) return;
 
-    const handle = parts[0].toLowerCase();
+    const handle  = parts[0].toLowerCase();
     const account = accountMap[handle];
     if (!account) return;
 
-    const banner = makeProfileBanner(account);
-
-    // Insert before the Posts/Replies/Media tab row — most stable landmark
+    const banner  = makeProfileBanner(account);
     const tabList = document.querySelector('[role="tablist"]');
+
     if (tabList) {
-      const nav = tabList.closest("nav") || tabList.parentElement;
-      nav?.insertAdjacentElement("beforebegin", banner);
+      (tabList.closest("nav") || tabList.parentElement)
+        ?.insertAdjacentElement("beforebegin", banner);
     } else {
-      // Fallback: after bio/header items
       const anchor =
         document.querySelector('[data-testid="UserProfileHeader_Items"]') ||
         document.querySelector('[data-testid="UserDescription"]');
@@ -269,58 +367,62 @@
       else document.querySelector('[data-testid="primaryColumn"]')?.prepend(banner);
     }
 
-    countDelta(1);
+    bumpCount();
   }
 
-  // ── Scan ─────────────────────────────────────────────────────────────────────
+  // ── Full scan ──────────────────────────────────────────────────────────────────
 
-  function scanRoot(root) {
+  function scan(root) {
     if (!root?.querySelectorAll) return;
     root.querySelectorAll('article[data-testid="tweet"]').forEach(processTweet);
     root.querySelectorAll('[data-testid="UserCell"]').forEach(processUserCell);
     tryProfileBanner();
+    injectSidebarWidget();
   }
 
-  // ── Observer + SPA nav ───────────────────────────────────────────────────────
+  // ── Observers ──────────────────────────────────────────────────────────────────
 
   let scanPending = false;
   function queueScan() {
     if (scanPending) return;
     scanPending = true;
-    requestAnimationFrame(() => { scanPending = false; scanRoot(document.body); });
+    requestAnimationFrame(() => { scanPending = false; scan(document.body); });
   }
 
   const domObserver = new MutationObserver(queueScan);
 
+  // SPA navigation
   let lastUrl = location.href;
   new MutationObserver(() => {
     if (location.href === lastUrl) return;
     lastUrl = location.href;
-    document.getElementById("mc-profile-banner")?.remove();
-    setTimeout(() => scanRoot(document.body), 900);
+    document.getElementById("pluto-profile-banner")?.remove();
+    setTimeout(() => scan(document.body), 900);
   }).observe(document, { subtree: true, childList: true });
 
-  // ── Storage changes ──────────────────────────────────────────────────────────
-
+  // Storage changes
   chrome.storage.onChanged.addListener(() => {
     reload(() => {
-      // Tear down everything and re-scan
-      document.querySelectorAll(".mc-badge, .mc-block-overlay, .mc-avatar-dot, #mc-profile-banner")
-        .forEach(el => el.remove());
-      document.querySelectorAll("[data-mc-tweet], [data-mc-done]").forEach(el => {
-        el.classList.remove("mc-tweet-blocked");
-        delete el.dataset.mcTweet;
-        delete el.dataset.mcDone;
-        delete el.dataset.mcRevealed;
+      document.querySelectorAll(
+        ".pluto-badge, .pluto-block-overlay, .pluto-avatar-dot, #pluto-profile-banner, #pluto-sidebar-widget"
+      ).forEach(el => el.remove());
+      document.querySelectorAll("[data-pluto-tweet],[data-pluto-done]").forEach(el => {
+        el.classList.remove("pluto-blocked","pluto-highlighted");
+        delete el.dataset.plutoTweet;
+        delete el.dataset.plutoDone;
+        delete el.dataset.plutoRevealed;
+        el.style.removeProperty("--phc");
+        el.style.removeProperty("--phb");
       });
-      scanRoot(document.body);
+      sessionCount = 0;
+      scan(document.body);
     });
   });
 
-  // ── Init ─────────────────────────────────────────────────────────────────────
+  // ── Init ───────────────────────────────────────────────────────────────────────
 
   reload(() => {
-    scanRoot(document.body);
+    scan(document.body);
     domObserver.observe(document.body, { childList: true, subtree: true });
   });
 })();
