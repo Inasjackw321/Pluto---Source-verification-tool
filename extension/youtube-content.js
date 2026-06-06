@@ -5,17 +5,31 @@
   window.__plutoYTLoaded = true;
 
   /* ── Settings ─────────────────────────────────────────────────── */
-  const settings = { showBadges: true, showBanners: true, showSidebarWidget: true };
-  chrome.storage.sync.get(
-    { showBadges: true, showBanners: true, showSidebarWidget: true },
-    s => Object.assign(settings, s)
-  );
+  // Read from same storage structure as the popup (nested `settings` object)
+  const settings = {
+    showBadges:        true,  // maps from settings.showTweetBadge
+    showBanners:       true,  // maps from settings.showProfileBanner
+    showSidebarWidget: true,
+  };
 
-  /* ── Trusted accounts ─────────────────────────────────────────── */
   let trustedSet = new Set();
-  chrome.storage.sync.get({ trustedAccounts: [] }, d => {
-    trustedSet = new Set(d.trustedAccounts.map(h => h.toLowerCase()));
-  });
+
+  function loadStorage(cb) {
+    chrome.storage.sync.get(['settings', 'trustedHandles'], data => {
+      const s = data.settings || {};
+      settings.showBadges        = s.showTweetBadge   !== false;
+      settings.showBanners       = s.showProfileBanner !== false;
+      settings.showSidebarWidget = s.showSidebarWidget !== false;
+      trustedSet = new Set((data.trustedHandles || []).map(h => h.toLowerCase()));
+      if (cb) cb();
+    });
+  }
+
+  loadStorage();
+
+  // Re-read whenever popup changes settings
+  chrome.storage.onChanged.addListener(() => loadStorage());
+
   function isTrusted(handle) {
     return trustedSet.has((handle || '').toLowerCase());
   }
@@ -25,61 +39,58 @@
     return (h || '').toLowerCase().replace(/[_\-\.@\s]/g, '');
   }
 
-  // YouTube handle → Twitter handle overrides (where they differ significantly)
+  // YouTube handle → Twitter handle overrides (where they differ)
   const YT_OVERRIDES = {
     // Russian
-    'rt':                 'RT_com',
-    'rtnews':             'RT_com',
-    'rtdoc':              'RT_Documentary',
-    'rtdocumentary':      'RT_Documentary',
-    'rtuk':               'RT_UK',
-    'rtindia':            'RT_India',
-    'sputniknews':        'SputnikInt',
-    'sputniknewsofficial':'SputnikInt',
-    'sputnik':            'SputnikInt',
-    'ruptly':             'Ruptly',
-    'redfishstream':      'Redfishstream',
-    'redfishmedia':       'Redfishstream',
-    'zvezda':             'ZvezdaTV_ru',
-    'zvezdatv':           'ZvezdaTV_ru',
+    'rt':                  'RT_com',
+    'rtnews':              'RT_com',
+    'rtdoc':               'RT_Documentary',
+    'rtdocumentary':       'RT_Documentary',
+    'rtuk':                'RT_UK',
+    'rtindia':             'RT_India',
+    'sputniknews':         'SputnikInt',
+    'sputniknewsofficial': 'SputnikInt',
+    'sputnik':             'SputnikInt',
+    'ruptly':              'Ruptly',
+    'redfishstream':       'Redfishstream',
+    'redfishmedia':        'Redfishstream',
+    'zvezda':              'ZvezdaTV_ru',
+    'zvezdatv':            'ZvezdaTV_ru',
     // Chinese
-    'cgtn':               'cgtnamerica',
-    'cgtnofficial':       'cgtnamerica',
-    'cgtnenglish':        'cgtnamerica',
-    'cgtneurope':         'CGTNEurope',
-    'cgtnafrica':         'CGTNAfrica',
-    'cgtnfrancais':       'CGTNFrancais',
-    'cgtnamerica':        'cgtnamerica',
-    'chinadailynewspaper':'ChinaDaily',
-    'criofficial':        'CRI_English',
-    'crienglishtv':       'CRI_English',
-    'xinhua':             'XHNews',
-    'xinhuanewsagency':   'XHNews',
-    'xinhuanews':         'XHNews',
-    'xinhuanewsnetwork':  'XHNews',
-    'peopledailychina':   'PDChina',
-    'globaltimes':        'GlobalTimesOP',
+    'cgtn':                'cgtnamerica',
+    'cgtnofficial':        'cgtnamerica',
+    'cgtnenglish':         'cgtnamerica',
+    'cgtneurope':          'CGTNEurope',
+    'cgtnafrica':          'CGTNAfrica',
+    'cgtnfrancais':        'CGTNFrancais',
+    'cgtnamerica':         'cgtnamerica',
+    'chinadailynewspaper': 'ChinaDaily',
+    'criofficial':         'CRI_English',
+    'crienglishtv':        'CRI_English',
+    'xinhua':              'XHNews',
+    'xinhuanewsagency':    'XHNews',
+    'xinhuanews':          'XHNews',
+    'xinhuanewsnetwork':   'XHNews',
+    'peopledailychina':    'PDChina',
+    'globaltimes':         'GlobalTimesOP',
     // Iranian
-    'presstv':            'PressTV',
-    'presstvofficial':    'PressTV',
-    'hispantv':           'HispanTV',
-    'almayadeen':         'AlMayadeen_en',
-    'almanar':            'AlManarNews',
-    'almanar':            'AlManarNews',
+    'presstv':             'PressTV',
+    'presstvofficial':     'PressTV',
+    'hispantv':            'HispanTV',
+    'almayadeen':          'AlMayadeen_en',
+    'almanar':             'AlManarNews',
     // Venezuelan / Cuban
-    'telesur':            'teleSURArabic',
-    'teleSUR':            'teleSURArabic',
-    'actualidadrt':       'ActualidadRT',
+    'telesur':             'teleSURArabic',
+    'actualidadrt':        'ActualidadRT',
     // Tucker / Western pro-Russia
-    'tuckercarlson':      'TuckerCarlson',
-    'thegrayzone':        'GrayzoneNews',
-    'grayzoneproject':    'GrayzoneNews',
+    'tuckercarlson':       'TuckerCarlson',
+    'thegrayzone':         'GrayzoneNews',
+    'grayzoneproject':     'GrayzoneNews',
   };
 
   /* ── Account map ──────────────────────────────────────────────── */
   const ytMap = new Map(); // normalized handle → account
 
-  // Auto-register all visible accounts by their Twitter handle
   for (const acc of PLUTO_ACCOUNTS) {
     const c = PLUTO_CATEGORIES[acc.category];
     if (c?.hidden) continue;
@@ -87,7 +98,6 @@
     ytMap.set(norm(acc.handle), acc);
   }
 
-  // Apply explicit YouTube overrides
   for (const [ytH, twitterH] of Object.entries(YT_OVERRIDES)) {
     const acc = PLUTO_ACCOUNTS.find(a => a.handle.toLowerCase() === twitterH.toLowerCase());
     if (acc) {
@@ -116,6 +126,8 @@
     if (m) return m[1];
     m = href.match(/\/c\/([^/?&#\s]+)/);
     if (m) return m[1];
+    m = href.match(/\/user\/([^/?&#\s]+)/);
+    if (m) return m[1];
     return null;
   }
 
@@ -126,15 +138,20 @@
   function makeBadge(acc) {
     const c = cat(acc);
     if (!c) return null;
+
+    // Wrapper ensures block layout regardless of YouTube's parent flex/grid
+    const wrap = document.createElement('div');
+    wrap.className = 'pluto-yt-badge-wrap';
+
     const el = document.createElement('span');
     el.className = 'pluto-yt-badge';
     el.dataset.plutoCategory = acc.category;
-    el.title = [c.label, acc.country, acc.detail].filter(Boolean).join(' · ');
+    el.title = [c.label, acc.country ? `(${acc.country})` : '', acc.detail].filter(Boolean).join(' — ');
     el.innerHTML = `<span class="pyb-icon">${c.textIcon}</span><span class="pyb-label">${c.label}</span>`;
-    el.style.setProperty('--pc', c.color);
-    el.style.setProperty('--pb', c.bgColor);
-    el.style.setProperty('--pbd', c.borderColor);
-    return el;
+    el.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
+
+    wrap.appendChild(el);
+    return wrap;
   }
 
   /* ── Watch / channel page banner ──────────────────────────────── */
@@ -144,9 +161,7 @@
     const el = document.createElement('div');
     el.id = 'pluto-yt-banner';
     el.className = `pluto-yt-banner pluto-yt-cat-${acc.category}`;
-    el.style.setProperty('--pc', c.color);
-    el.style.setProperty('--pb', c.bgColor);
-    el.style.setProperty('--pbd', c.borderColor);
+    el.style.cssText = `--pc:${c.color};--pb:${c.bgColor};--pbd:${c.borderColor}`;
 
     const name = displayName || `@${acc.handle}`;
     const country = acc.country ? ` · ${acc.country}` : '';
@@ -171,10 +186,11 @@
       </div>`;
 
     el.querySelector('.pyt-trust').addEventListener('click', () => {
-      chrome.storage.sync.get({ trustedAccounts: [] }, d => {
-        const t = d.trustedAccounts;
+      // Write to trustedHandles — same key used by Twitter script and popup
+      chrome.storage.sync.get({ trustedHandles: [] }, d => {
+        const t = d.trustedHandles;
         if (!t.includes(acc.handle)) t.push(acc.handle);
-        chrome.storage.sync.set({ trustedAccounts: t });
+        chrome.storage.sync.set({ trustedHandles: t });
       });
       el.remove();
     });
@@ -184,27 +200,39 @@
 
   /* ── Video card processing ────────────────────────────────────── */
   function processVideoCard(card) {
-    if (card.dataset.plutoYt) return;
+    if (card.dataset.plutoYtDone) return;
 
+    // Try multiple selectors for channel link — YouTube changes these periodically
     const channelLink =
       card.querySelector('ytd-channel-name a.yt-simple-endpoint[href]') ||
       card.querySelector('#channel-name a[href]') ||
-      card.querySelector('a.yt-simple-endpoint[href*="/@"]');
-    if (!channelLink) return;
+      card.querySelector('a.yt-simple-endpoint[href*="/@"]') ||
+      card.querySelector('a[href*="/@"][class*="yt"]') ||
+      card.querySelector('#byline-container a[href]');
+
+    if (!channelLink) return; // not ready yet — don't mark, allow retry
 
     const handle = handleFromHref(channelLink.getAttribute('href'));
-    if (!handle) return;
+    if (!handle) {
+      card.dataset.plutoYtDone = 'no-handle';
+      return;
+    }
 
-    card.dataset.plutoYt = handle;
+    card.dataset.plutoYtDone = handle;
+
     if (isTrusted(handle)) return;
+    if (!settings.showBadges) return;
+
     const acc = lookup(handle);
     if (!acc) return;
-
-    if (!settings.showBadges) return;
 
     const badge = makeBadge(acc);
     if (!badge) return;
 
+    // Don't double-badge
+    if (card.querySelector('.pluto-yt-badge-wrap')) return;
+
+    // Insert after channel name element
     const nameEl =
       channelLink.closest('ytd-channel-name') ||
       channelLink.closest('#channel-name') ||
@@ -213,13 +241,16 @@
 
     // Overlay on thumbnail for blocked accounts
     if (acc.blocked) {
-      const thumb = card.querySelector('#thumbnail, ytd-thumbnail, a#thumbnail');
+      const thumb =
+        card.querySelector('ytd-thumbnail') ||
+        card.querySelector('a#thumbnail') ||
+        card.querySelector('#thumbnail');
       if (thumb && !thumb.querySelector('.pluto-yt-block-overlay')) {
         const overlay = document.createElement('div');
         overlay.className = 'pluto-yt-block-overlay';
-        overlay.innerHTML = `<div class="pybo-inner"><span class="pybo-icon">${PLUTO_CATEGORIES[acc.category]?.textIcon || '★'}</span><span class="pybo-text">State Media</span></div>`;
-        overlay.style.setProperty('--pb', PLUTO_CATEGORIES[acc.category]?.bgColor || '#fffbeb');
-        overlay.style.setProperty('--pc', PLUTO_CATEGORIES[acc.category]?.color || '#b45309');
+        const catDef = PLUTO_CATEGORIES[acc.category] || {};
+        overlay.innerHTML = `<div class="pybo-inner"><span class="pybo-icon">${catDef.textIcon || '★'}</span><span class="pybo-text">State Media</span></div>`;
+        overlay.style.cssText = `--pb:${catDef.bgColor || '#fffbeb'};--pc:${catDef.color || '#b45309'}`;
         thumb.style.position = 'relative';
         thumb.appendChild(overlay);
       }
@@ -240,7 +271,8 @@
       document.querySelector('#owner #channel-name a.yt-simple-endpoint[href]') ||
       document.querySelector('ytd-video-owner-renderer #channel-name a[href]') ||
       document.querySelector('#upload-info #channel-name a[href]') ||
-      document.querySelector('#owner a.yt-simple-endpoint[href*="/@"]');
+      document.querySelector('#owner a[href*="/@"]') ||
+      document.querySelector('ytd-video-owner-renderer a[href*="/@"]');
     if (!ownerLink) return;
 
     const handle = handleFromHref(ownerLink.getAttribute('href'));
@@ -256,11 +288,13 @@
     const banner = makeYtBanner(acc, displayName);
     if (!banner) return;
 
-    const below =
+    // Multiple insertion point attempts — YouTube watch layout varies
+    const insertTarget =
+      document.querySelector('#above-the-fold') ||
       document.querySelector('#below') ||
       document.querySelector('ytd-watch-metadata') ||
       document.querySelector('#primary-inner');
-    if (below) below.insertAdjacentElement('afterbegin', banner);
+    if (insertTarget) insertTarget.insertAdjacentElement('afterbegin', banner);
 
     pageFlags.add(handle.toLowerCase());
     updateSidebarCount();
@@ -285,6 +319,7 @@
     const displayName =
       document.querySelector('ytd-channel-header-renderer #channel-name yt-formatted-string')?.textContent.trim() ||
       document.querySelector('yt-page-header-renderer h1')?.textContent.trim() ||
+      document.querySelector('ytd-c4-tabbed-header-renderer #channel-header-container yt-formatted-string')?.textContent.trim() ||
       `@${handle}`;
 
     const banner = makeYtBanner(acc, displayName);
@@ -293,7 +328,8 @@
     const header =
       document.querySelector('ytd-c4-tabbed-header-renderer') ||
       document.querySelector('yt-page-header-renderer') ||
-      document.querySelector('#channel-header');
+      document.querySelector('#channel-header') ||
+      document.querySelector('ytd-channel-header-renderer');
     if (header) header.insertAdjacentElement('afterend', banner);
 
     pageFlags.add(handle.toLowerCase());
@@ -312,15 +348,16 @@
     wrap.innerHTML = `
       <div class="pys-widget" id="${YT_SIDEBAR_ID}-btn">
         <span class="pys-glow">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="11" cy="11" r="7" stroke="#7c3aed" stroke-width="2"/>
-            <path d="M17.5 17.5L21 21" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="11" cy="11" r="3" fill="#7c3aed" opacity="0.35"/>
+          <svg width="18" height="18" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="14" cy="14" r="9" stroke="#a78bfa" stroke-width="2.2" fill="rgba(124,58,237,0.12)"/>
+            <line x1="14" y1="9.5" x2="14" y2="18.5" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="9.5" y1="14" x2="18.5" y2="14" stroke="#c4b5fd" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="21" y1="21" x2="29.5" y2="29.5" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
           </svg>
         </span>
         <div class="pys-text">
           <span class="pys-name">Pluto</span>
-          <span class="pys-sub" id="${YT_SIDEBAR_ID}-count">0 flagged</span>
+          <span class="pys-sub" id="${YT_SIDEBAR_ID}-count">Media Intelligence</span>
         </div>
         <span class="pys-beta">BETA</span>
       </div>
@@ -349,11 +386,12 @@
     list.innerHTML = '';
 
     const attachRescan = btn => btn?.addEventListener('click', () => {
-      document.querySelectorAll('[data-pluto-yt]').forEach(el => delete el.dataset.plutoYt);
-      document.querySelectorAll('.pluto-yt-badge').forEach(el => el.remove());
+      document.querySelectorAll('[data-pluto-yt-done]').forEach(el => delete el.dataset.plutoYtDone);
+      document.querySelectorAll('.pluto-yt-badge-wrap').forEach(el => el.remove());
       pageFlags.clear();
+      updateSidebarCount();
       scan(document.body);
-      setTimeout(renderYtPanel, 300);
+      setTimeout(renderYtPanel, 400);
     });
 
     if (pageFlags.size === 0) {
@@ -386,21 +424,26 @@
 
   function updateSidebarCount() {
     const el = document.getElementById(`${YT_SIDEBAR_ID}-count`);
-    if (el) el.textContent = `${pageFlags.size} flagged`;
+    if (!el) return;
+    el.textContent = pageFlags.size > 0
+      ? `${pageFlags.size} flagged this page`
+      : 'Media Intelligence';
   }
 
   function injectSidebarWidget() {
     if (!settings.showSidebarWidget) return;
     if (document.getElementById(YT_SIDEBAR_ID)) return;
 
-    const guide =
+    // Try multiple YouTube guide container selectors
+    const target =
+      document.querySelector('ytd-guide-renderer #guide-inner-content') ||
       document.querySelector('#guide-inner-content') ||
-      document.querySelector('ytd-guide-renderer #items') ||
-      document.querySelector('#guide-content #items') ||
+      document.querySelector('ytd-guide-renderer #sections') ||
+      document.querySelector('ytd-guide-renderer') ||
       document.querySelector('#guide-content');
-    if (!guide) return;
+    if (!target) return;
 
-    guide.prepend(makeSidebarWidget());
+    target.insertAdjacentElement('afterbegin', makeSidebarWidget());
   }
 
   /* ── Keyboard shortcut Alt+P ──────────────────────────────────── */
@@ -418,11 +461,10 @@
     'ytd-compact-video-renderer',
     'ytd-grid-video-renderer',
     'ytd-playlist-video-renderer',
-    'ytd-reel-item-renderer',
   ].join(', ');
 
   function scan(root) {
-    if (!settings.showBadges) return;
+    if (!root?.querySelectorAll) return;
     root.querySelectorAll(VIDEO_CARD_SELECTORS).forEach(processVideoCard);
   }
 
@@ -463,14 +505,19 @@
     channelBannerHandle = null;
     pageFlags.clear();
     updateSidebarCount();
+    // Re-inject sidebar widget — YouTube may rebuild guide DOM on some navigations
+    document.getElementById(YT_SIDEBAR_ID)?.remove();
     detectPage();
-    [200, 600, 1200].forEach(d => setTimeout(() => scan(document.body), d));
+    [100, 400, 800, 1600].forEach(d => setTimeout(() => {
+      scan(document.body);
+      injectSidebarWidget();
+    }, d));
   });
 
   /* ── Init ─────────────────────────────────────────────────────── */
   scan(document.body);
   detectPage();
-  setInterval(injectSidebarWidget, 700);
-  setInterval(() => scan(document.body), 3000);
+  setInterval(injectSidebarWidget, 600);
+  setInterval(() => scan(document.body), 2500);
 
 })();

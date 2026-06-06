@@ -377,8 +377,8 @@
     updateSidebarCount();
   }
 
-  // Keep widget alive — 700ms catches faster SPA re-renders
-  setInterval(injectSidebarWidget, 700);
+  // Keep widget alive — 500ms catches faster SPA re-renders
+  setInterval(injectSidebarWidget, 500);
 
   // ── Badge ──────────────────────────────────────────────────────────────────────
 
