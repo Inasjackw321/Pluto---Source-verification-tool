@@ -1,6 +1,12 @@
 (() => {
   "use strict";
 
+  // ── Config ────────────────────────────────────────────────────────────────────
+  // Replace with your Google Form URL. Use ?usp=pp_url&entry.XXXX= params to
+  // pre-fill fields. Leave empty to fall back to mailto.
+  const REPORT_FORM_URL  = "";
+  const REPORT_EMAIL     = "jackevanspersonal@gmail.com";
+
   // ── State ────────────────────────────────────────────────────────────────────
 
   let accountMap = {};
@@ -152,6 +158,131 @@
     });
   }
 
+  // ── Report modal ──────────────────────────────────────────────────────────────
+
+  const REPORT_CATEGORIES = [
+    "State Propaganda",
+    "State-Funded Media",
+    "Misinformation / Unverified Claims",
+    "Conspiracy / Fringe",
+    "Coordinated Inauthentic Behaviour",
+    "Hate / Extremism",
+    "Other"
+  ];
+
+  function openReportModal(handle) {
+    document.querySelector(".pluto-report-bg")?.remove();
+
+    const bg = document.createElement("div");
+    bg.className = "pluto-report-bg";
+    bg.innerHTML = `
+      <div class="pluto-report-modal" role="dialog" aria-modal="true" aria-label="Report account">
+        <div class="prm-header">
+          <div class="prm-header-left">
+            <div class="prm-logo-wrap">${PLUTO_LOGO_SM}</div>
+            <div>
+              <div class="prm-title">Report to Pluto</div>
+              <div class="prm-handle">@${handle}</div>
+            </div>
+          </div>
+          <button class="prm-close" aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <form class="prm-form" novalidate>
+          <div class="prm-field">
+            <label class="prm-label">Category</label>
+            <select class="prm-select" name="category">
+              <option value="">Select a category…</option>
+              ${REPORT_CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join("")}
+            </select>
+          </div>
+          <div class="prm-field">
+            <label class="prm-label">Evidence / Reason <span class="prm-required">*</span></label>
+            <textarea class="prm-textarea" name="reason" rows="4"
+              placeholder="Describe why this account should be flagged. Link to specific posts if possible."></textarea>
+          </div>
+          <div class="prm-field">
+            <label class="prm-label">Source URL <span class="prm-optional">(optional)</span></label>
+            <input class="prm-input" type="url" name="source" placeholder="https://…">
+          </div>
+          <div class="prm-actions">
+            <button type="button" class="prm-btn-cancel">Cancel</button>
+            <button type="submit" class="prm-btn-submit">
+              Send Report
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </form>
+        <div class="prm-sent" hidden>
+          <div class="prm-sent-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="#4ade80" stroke-width="1.5"/><path d="M8 14l4 4 8-8" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="prm-sent-title">Report sent</div>
+          <div class="prm-sent-sub">Thanks — @${handle} will be reviewed.</div>
+        </div>
+      </div>
+    `;
+
+    const close = () => {
+      bg.classList.add("prm-out");
+      bg.addEventListener("transitionend", () => bg.remove(), { once: true });
+    };
+
+    bg.addEventListener("click", e => { if (e.target === bg) close(); });
+    bg.querySelector(".prm-close").addEventListener("click", close);
+    bg.querySelector(".prm-btn-cancel").addEventListener("click", close);
+    document.addEventListener("keydown", function esc(e) {
+      if (e.key === "Escape") { close(); document.removeEventListener("keydown", esc); }
+    });
+
+    bg.querySelector(".prm-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const form     = e.target;
+      const category = form.category.value;
+      const reason   = form.reason.value.trim();
+      const source   = form.source.value.trim();
+
+      if (!reason) {
+        form.reason.classList.add("prm-error");
+        form.reason.focus();
+        return;
+      }
+      form.reason.classList.remove("prm-error");
+
+      const body = [
+        `Handle: @${handle}`,
+        category ? `Category: ${category}` : "",
+        `Reason: ${reason}`,
+        source ? `Source: ${source}` : "",
+        `Reported from: ${location.href}`
+      ].filter(Boolean).join("\n");
+
+      if (REPORT_FORM_URL) {
+        const url = new URL(REPORT_FORM_URL);
+        // Append pre-fill params — update entry IDs once you create the form
+        url.searchParams.set("entry.handle",   `@${handle}`);
+        url.searchParams.set("entry.category", category);
+        url.searchParams.set("entry.reason",   reason);
+        url.searchParams.set("entry.source",   source);
+        window.open(url.toString(), "_blank", "noopener");
+      } else {
+        const subject = encodeURIComponent(`[Pluto Report] @${handle}`);
+        const bodyEnc = encodeURIComponent(body);
+        window.open(`mailto:${REPORT_EMAIL}?subject=${subject}&body=${bodyEnc}`, "_blank");
+      }
+
+      // Show confirmation
+      bg.querySelector(".prm-form").hidden = true;
+      bg.querySelector(".prm-sent").hidden = false;
+      setTimeout(close, 2800);
+    });
+
+    document.body.appendChild(bg);
+    requestAnimationFrame(() => bg.classList.add("prm-show"));
+    bg.querySelector(".prm-select").focus();
+  }
+
   // ── Tweet "···" menu injection ─────────────────────────────────────────────────
 
   function makePlutoMenuItem(handle) {
@@ -213,14 +344,38 @@
           (node.dataset?.testid === "Dropdown" ? node : null) ||
           node.querySelector?.('[data-testid="Dropdown"]');
         if (dropdown && pendingMenuHandle && !dropdown.querySelector(".pluto-menu-item")) {
-          // Insert as first item with a divider beneath
-          const divider = document.createElement("div");
-          divider.className = "pluto-menu-divider";
-          const item = makePlutoMenuItem(pendingMenuHandle);
-          dropdown.insertBefore(divider, dropdown.firstChild);
-          dropdown.insertBefore(item, dropdown.firstChild);
           const h = pendingMenuHandle;
           pendingMenuHandle = null;
+
+          // Report item
+          const reportItem = document.createElement("div");
+          reportItem.className = "pluto-menu-item";
+          reportItem.setAttribute("role", "menuitem");
+          reportItem.setAttribute("tabindex", "0");
+          reportItem.innerHTML = `
+            <span class="pluto-menu-icon pluto-menu-icon-report">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v5M7 9.5v1" stroke="#ef4444" stroke-width="1.6" stroke-linecap="round"/><path d="M1.5 12.5L7 1.5l5.5 11H1.5Z" stroke="#ef4444" stroke-width="1.4" stroke-linejoin="round" fill="none"/></svg>
+            </span>
+            <span class="pluto-menu-text pluto-menu-text-report">Report @${h} to Pluto…</span>
+          `;
+          reportItem.addEventListener("click", ev => {
+            ev.stopPropagation();
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+            openReportModal(h);
+          });
+          reportItem.addEventListener("keydown", ev => {
+            if (ev.key === "Enter" || ev.key === " ") reportItem.click();
+          });
+
+          // Flag item
+          const flagItem = makePlutoMenuItem(h);
+
+          const divider = document.createElement("div");
+          divider.className = "pluto-menu-divider";
+
+          dropdown.insertBefore(divider, dropdown.firstChild);
+          dropdown.insertBefore(reportItem, dropdown.firstChild);
+          dropdown.insertBefore(flagItem, dropdown.firstChild);
         }
       }
     }
@@ -447,6 +602,10 @@
         ${account.source ? `<div class="pluto-banner-source">${account.source}</div>` : ""}
       </div>
       <div class="pluto-banner-btns">
+        <button class="pluto-banner-report" title="Report this account to Pluto">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 1.5v4M6 8v.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M1 11L6 1l5 10H1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/></svg>
+          Report
+        </button>
         <button class="pluto-banner-trust" title="Mark as trusted">
           <svg width="10" height="10" viewBox="0 0 11 11" fill="none"><path d="M1.5 5.5L4 8.5L9.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Trust
@@ -456,6 +615,9 @@
         </button>
       </div>
     `;
+    banner.querySelector(".pluto-banner-report").addEventListener("click", () => {
+      openReportModal(account.handle);
+    });
     banner.querySelector(".pluto-banner-trust").addEventListener("click", () => {
       chrome.storage.sync.get("trustedHandles", data => {
         const trusted = data.trustedHandles || [];

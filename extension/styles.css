@@ -477,3 +477,152 @@ html.dark .pluto-menu-divider { background: rgba(255,255,255,0.08); }
 }
 .pluto-toast-main { font-size: 12.5px; font-weight: 600; color: #f1f5f9; }
 .pluto-toast-sub  { font-size: 11px; color: #64748b; }
+
+/* ── Report button in banner ─────────────────────────────── */
+
+.pluto-banner-report {
+  display: flex; align-items: center; gap: 3px;
+  background: none; border: 1px solid rgba(239,68,68,0.35);
+  border-radius: 7px; cursor: pointer;
+  color: #ef4444; font-size: 10.5px; font-weight: 600;
+  padding: 3px 8px; font-family: inherit;
+  transition: background 0.14s;
+  white-space: nowrap;
+}
+.pluto-banner-report:hover { background: rgba(239,68,68,0.08); }
+
+/* ── Report menu item ────────────────────────────────────── */
+
+.pluto-menu-text-report { color: #ef4444; }
+.pluto-menu-icon-report { color: #ef4444; }
+
+/* ── Report modal ────────────────────────────────────────── */
+
+.pluto-report-bg {
+  position: fixed; inset: 0; z-index: 9999999;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.pluto-report-bg.prm-show  { opacity: 1; }
+.pluto-report-bg.prm-out   { opacity: 0; }
+
+.pluto-report-modal {
+  background: #0d1117;
+  border: 1px solid rgba(124,58,237,0.28);
+  border-radius: 18px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+  width: 400px; max-width: calc(100vw - 32px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+  transform: scale(0.95) translateY(8px);
+  transition: transform 0.25s cubic-bezier(.22,1,.36,1);
+}
+.pluto-report-bg.prm-show .pluto-report-modal {
+  transform: scale(1) translateY(0);
+}
+
+.prm-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.prm-header-left {
+  display: flex; align-items: center; gap: 10px;
+}
+.prm-logo-wrap {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: rgba(124,58,237,0.18);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.prm-title {
+  font-size: 14px; font-weight: 700; color: #f1f5f9; line-height: 1.2;
+}
+.prm-handle {
+  font-size: 11.5px; color: #64748b; margin-top: 1px;
+}
+.prm-close {
+  background: none; border: none; cursor: pointer;
+  color: #475569; padding: 4px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.14s, background 0.14s;
+}
+.prm-close:hover { color: #e2e8f0; background: rgba(255,255,255,0.06); }
+
+.prm-form { padding: 18px 20px 20px; }
+
+.prm-field { margin-bottom: 14px; }
+.prm-label {
+  display: block;
+  font-size: 11px; font-weight: 600; color: #64748b;
+  text-transform: uppercase; letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+.prm-required { color: #ef4444; }
+.prm-optional { color: #334155; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+.prm-select,
+.prm-input,
+.prm-textarea {
+  width: 100%; box-sizing: border-box;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 9px;
+  color: #e2e8f0;
+  font-size: 13px; font-family: inherit;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color 0.15s;
+  appearance: none;
+}
+.prm-select:focus,
+.prm-input:focus,
+.prm-textarea:focus {
+  border-color: rgba(124,58,237,0.6);
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+}
+.prm-textarea {
+  resize: vertical; min-height: 90px; line-height: 1.5;
+}
+.prm-textarea.prm-error {
+  border-color: rgba(239,68,68,0.7);
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+}
+.prm-select option { background: #1e293b; }
+.prm-input::placeholder,
+.prm-textarea::placeholder { color: #334155; }
+
+.prm-actions {
+  display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px;
+}
+.prm-btn-cancel {
+  background: none; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 9px; color: #64748b;
+  font-size: 13px; font-weight: 600; padding: 8px 16px;
+  cursor: pointer; font-family: inherit; transition: background 0.14s;
+}
+.prm-btn-cancel:hover { background: rgba(255,255,255,0.05); }
+
+.prm-btn-submit {
+  display: flex; align-items: center; gap: 6px;
+  background: #7c3aed; border: none; border-radius: 9px;
+  color: #fff; font-size: 13px; font-weight: 700;
+  padding: 8px 18px; cursor: pointer; font-family: inherit;
+  transition: background 0.14s, box-shadow 0.14s;
+}
+.prm-btn-submit:hover {
+  background: #6d28d9;
+  box-shadow: 0 4px 16px rgba(124,58,237,0.4);
+}
+
+/* Confirmation state */
+.prm-sent {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 32px 20px 36px; text-align: center; gap: 10px;
+}
+.prm-sent-icon { animation: pluto-overlay-in 0.3s cubic-bezier(.22,1,.36,1) both; }
+.prm-sent-title { font-size: 16px; font-weight: 700; color: #f1f5f9; }
+.prm-sent-sub   { font-size: 12.5px; color: #64748b; }
