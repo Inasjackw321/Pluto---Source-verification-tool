@@ -339,15 +339,30 @@
     }
   }
 
+  // Walk up from an element to find its nav-item container block.
+  // Stops when the parent is the sideNav itself, has a role, or has multiple
+  // children (meaning we've reached a shared container, not an item wrapper).
+  function navItemBlock(el, sideNav) {
+    let cur = el.parentElement;
+    while (cur && cur !== sideNav) {
+      const p = cur.parentElement;
+      if (!p || p === sideNav) return cur;
+      if (p.getAttribute("role") || p.children.length > 2) return cur;
+      cur = p;
+    }
+    return el.parentElement || el;
+  }
+
   function injectSidebarWidget() {
     if (!settings.showSidebarWidget) return;
     if (document.getElementById(SIDEBAR_ID)) return;
 
     const sideNav =
-      document.querySelector('[data-testid="SideNav"]')    ||
-      document.querySelector('[data-testid="AppTabBar"]')  ||
-      document.querySelector("header[role=banner]")        ||
-      document.querySelector('nav[aria-label="Primary"]')  ||
+      document.querySelector('[data-testid="SideNav"]')         ||
+      document.querySelector('[data-testid="AppTabBar"]')       ||
+      document.querySelector('nav[aria-label="Primary"]')       ||
+      document.querySelector('nav[aria-label="primary"]')       ||
+      document.querySelector("header[role=banner]")             ||
       document.querySelector('nav[role="navigation"]');
     if (!sideNav) return;
 
@@ -355,33 +370,51 @@
 
     // Target: insert BEFORE the Home nav item so widget sits between X logo and Home
     const homeLink =
-      sideNav.querySelector('a[href="/home"]') ||
-      sideNav.querySelector('a[data-testid="AppTabBar-Home"]') ||
+      sideNav.querySelector('a[href="/home"]')                              ||
+      sideNav.querySelector('[data-testid="AppTabBar_Home_Link"]')         ||
+      sideNav.querySelector('[data-testid="AppTabBar-Home-Link"]')         ||
       sideNav.querySelector('a[aria-label="Home"]');
 
     if (homeLink) {
-      const homeBlock = homeLink.closest("li, div[class]") || homeLink.parentElement;
-      homeBlock.insertAdjacentElement("beforebegin", widget);
+      navItemBlock(homeLink, sideNav).insertAdjacentElement("beforebegin", widget);
     } else {
       // Fallback: insert after the X / site-logo link
       const logoLink =
         sideNav.querySelector('a[aria-label="X"]') ||
         sideNav.querySelector('a[href="/"]');
       if (logoLink) {
-        const block = logoLink.closest("li, div[class]") || logoLink.parentElement;
-        block.insertAdjacentElement("afterend", widget);
+        navItemBlock(logoLink, sideNav).insertAdjacentElement("afterend", widget);
       } else {
         sideNav.prepend(widget);
       }
     }
     updateSidebarCount();
+    updateSidebarCompactMode();
+  }
+
+  function updateSidebarCompactMode() {
+    const widget = document.getElementById(SIDEBAR_ID);
+    if (!widget) return;
+    // Detect icon-only sidebar: Twitter hides the text label spans in compact mode
+    const homeLink =
+      document.querySelector('a[href="/home"]') ||
+      document.querySelector('[data-testid="AppTabBar_Home_Link"]');
+    if (!homeLink) return;
+    const labelSpan = [...homeLink.querySelectorAll("span")].find(
+      s => s.textContent.trim() === "Home" && !s.children.length
+    );
+    const isCompact = labelSpan
+      ? getComputedStyle(labelSpan).display === "none" ||
+        getComputedStyle(labelSpan).visibility === "hidden"
+      : false;
+    widget.classList.toggle("psw-compact", isCompact);
   }
 
   // Burst injection at startup so widget appears immediately when nav is ready,
   // then keep it alive with an interval for SPA re-renders
   injectSidebarWidget();
   [50, 150, 350, 700, 1400, 2500].forEach(d => setTimeout(injectSidebarWidget, d));
-  setInterval(injectSidebarWidget, 500);
+  setInterval(() => { injectSidebarWidget(); updateSidebarCompactMode(); }, 500);
 
   // ── Badge ──────────────────────────────────────────────────────────────────────
 

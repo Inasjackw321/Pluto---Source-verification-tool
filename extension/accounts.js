@@ -1212,6 +1212,48 @@ const PLUTO_ACCOUNTS = [
     detail: "Posts content aligned with Iranian state media narratives on geopolitical conflicts. Amplifies IRGC-linked media sources.",
     source: "Community Notes (Twitter)"
   },
+  {
+    handle: "IRGC_IRAN_News", label: "IRGC Propaganda", category: "state-propaganda",
+    blocked: true, trust: 5, country: "IR",
+    detail: "Account operating in the name of Iran's Islamic Revolutionary Guard Corps. Promotes IRGC military operations, anti-Western narratives, and Iranian regime messaging.",
+    source: "OFAC SDN list · Stanford Internet Observatory"
+  },
+  {
+    handle: "IranIRGCC", label: "IRGC-Linked Account", category: "state-propaganda",
+    blocked: true, trust: 5, country: "IR",
+    detail: "Promotes Islamic Revolutionary Guard Corps messaging and Iranian regime narratives. Consistent with documented IRGC information operations.",
+    source: "Community Notes · OFAC"
+  },
+  {
+    handle: "Irantimes01", label: "Iranian State-Linked Media", category: "state-propaganda",
+    blocked: false, trust: 12, country: "IR",
+    detail: "Presents as an independent Iranian news account but amplifies Iranian state media framing on sanctions, regional conflicts, and anti-Western narratives.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "Irantimes02", label: "Iranian State-Linked Media", category: "state-propaganda",
+    blocked: false, trust: 12, country: "IR",
+    detail: "Sister account to Irantimes01. Amplifies Iranian government positions on the nuclear programme, sanctions, and regional conflicts.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "IranDefenceForc", label: "Iranian Military Propaganda", category: "state-propaganda",
+    blocked: false, trust: 8, country: "IR",
+    detail: "Posts content promoting Iranian military capabilities and IRGC operations. Amplifies regime messaging on proxy forces across the Middle East.",
+    source: "Community Notes · Stanford Internet Observatory"
+  },
+  {
+    handle: "IranUpdatesNow", label: "Iran State-Linked", category: "state-propaganda",
+    blocked: false, trust: 14, country: "IR",
+    detail: "Posts Iran-focused political content closely aligned with Iranian government narratives. Claims to provide 'updates' but sources consistently reflect IRIB/IRNA framing.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "troopwatchiran", label: "Unverified Iran Claims", category: "misinformation",
+    blocked: false, trust: 22,
+    detail: "Posts claims about Iranian military movements and proxy forces without verifiable sourcing. Content amplified by both pro-Iran and alarmist accounts before confirmation.",
+    source: "Community Notes (Twitter)"
+  },
 
   // ═══ CHINESE STATE MEDIA (additional handles) ════════════════════════════
 
@@ -1227,6 +1269,18 @@ const PLUTO_ACCOUNTS = [
     detail: "CGTN America — US bureau of China Global Television Network. Registered as a foreign agent under FARA. Identical editorial oversight as CGTNOfficial.",
     source: "FARA registration 2019"
   },
+  {
+    handle: "Eng_china5", label: "Chinese State-Linked", category: "state-propaganda",
+    blocked: false, trust: 16, country: "CN",
+    detail: "Posts pro-CCP content and amplifies Chinese state media narratives on Taiwan, Xinjiang, and Western criticism of China.",
+    source: "Community Notes · EU DisinfoLab"
+  },
+  {
+    handle: "XiZnping", label: "Xi Jinping Impersonation", category: "state-propaganda",
+    blocked: false, trust: 5, country: "CN",
+    detail: "Account impersonating or parodying Chinese leader Xi Jinping. Used to spread false attributions and pro-CCP narratives under a misleading handle.",
+    source: "Community Notes (Twitter)"
+  },
 
   // ═══ MULTI-STATE / BLOC PROPAGANDA ═══════════════════════════════════════
 
@@ -1235,6 +1289,12 @@ const PLUTO_ACCOUNTS = [
     blocked: false, trust: 15,
     detail: "Promotes BRICS messaging that frequently amplifies Russian, Chinese, and Iranian state narratives on sanctions, the Ukraine war, and Western institutions.",
     source: "EU DisinfoLab · Community Notes"
+  },
+  {
+    handle: "RussCan91", label: "Pro-Russia Account", category: "state-propaganda",
+    blocked: false, trust: 12, country: "RU",
+    detail: "Consistently amplifies Russian state media narratives on the Ukraine war, NATO, and Western sanctions. Content pattern consistent with Kremlin-aligned influence networks.",
+    source: "Community Notes · Bellingcat"
   },
 
   // ═══ UNVERIFIED WAR / OSINT ACCOUNTS ═════════════════════════════════════
@@ -1305,6 +1365,48 @@ const PLUTO_ACCOUNTS = [
     detail: "Rapid-fire breaking news alerts, often posted before information can be verified. Some alerts have required subsequent retraction.",
     source: "Community Notes (Twitter)"
   },
+  {
+    handle: "WW3_Monitor", label: "Sensationalist War Content", category: "misinformation",
+    blocked: false, trust: 15,
+    detail: "Posts alarmist conflict escalation claims framed as imminent world war scenarios. Content amplifies unverified reports and spreads before confirmation by credible outlets.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "intelFromBrian", label: "Unverified Intel Claims", category: "misinformation",
+    blocked: false, trust: 22,
+    detail: "Posts 'intelligence' and conflict claims without verifiable sources or traceable credentials. Presents speculation as confirmed intel.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "ME_Observer_", label: "Unverified ME Claims", category: "misinformation",
+    blocked: false, trust: 25,
+    detail: "Posts Middle East conflict updates without consistent source verification. Claims frequently circulate before independent confirmation.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "MEC_Tracker", label: "Unverified Conflict Tracker", category: "misinformation",
+    blocked: false, trust: 24,
+    detail: "Posts Middle East conflict tracking data from open sources without editorial verification. Has spread unconfirmed casualty and strike claims.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "GlobalNewsHQI", label: "Unverified Breaking News", category: "misinformation",
+    blocked: false, trust: 20,
+    detail: "Posts rapid-fire breaking news claims across multiple conflict zones without source verification. Content has been disputed by subsequent mainstream reporting.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "USarmypwr", label: "Unverified Military Claims", category: "misinformation",
+    blocked: false, trust: 20,
+    detail: "Posts claims about US military operations and power without traceable sourcing. Not affiliated with the official US Army. Content frequently lacks context.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "24_70xu", label: "Unverified Claims", category: "misinformation",
+    blocked: false, trust: 18,
+    detail: "Posts geopolitical and conflict claims without verifiable sources. Content amplified by state-linked accounts.",
+    source: "Community Notes (Twitter)"
+  },
 
   // ═══ PARTISAN COMMENTATORS ════════════════════════════════════════════════
 
@@ -1343,6 +1445,42 @@ const PLUTO_ACCOUNTS = [
     blocked: false, trust: 30,
     detail: "Frequently posts unverified claims and political misinformation. Multiple posts have received Community Notes corrections. As owner of X, posts receive outsized algorithmic amplification.",
     source: "Community Notes · PolitiFact · AP Fact Check"
+  },
+  {
+    handle: "mark_slapinski", label: "Far-Right Misinformation", category: "misinformation",
+    blocked: false, trust: 14, country: "CA",
+    detail: "Canadian far-right commentator who spreads anti-immigration, anti-Muslim, and anti-LGBTQ+ content. Posts regularly flagged by Community Notes for factual inaccuracies.",
+    source: "Community Notes · Canadian Anti-Hate Network"
+  },
+  {
+    handle: "MarioNawfal", label: "Unverified Breaking News", category: "misinformation",
+    blocked: false, trust: 18,
+    detail: "Hosts X Spaces and posts breaking news claims at high speed without editorial verification. Repeatedly cited for spreading false or premature information during major news events.",
+    source: "Community Notes · Reuters fact-checks"
+  },
+  {
+    handle: "ShaykhSulaiman", label: "Unverified Claims", category: "misinformation",
+    blocked: false, trust: 22,
+    detail: "Posts religious and geopolitical content that frequently contains unverified claims about conflicts in the Muslim world. Content has been labelled misleading by Community Notes.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "MrImranPk", label: "Partisan Commentary", category: "misinformation",
+    blocked: false, trust: 24, country: "PK",
+    detail: "Posts pro-PTI (Pakistan Tehreek-e-Insaf) commentary and political claims. Content frequently contains misleading framing about Pakistani government and military actions.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "Netanyahu_News", label: "Unofficial / Unverified", category: "misinformation",
+    blocked: false, trust: 10,
+    detail: "Unofficial account claiming to report news about Israeli Prime Minister Netanyahu. Not affiliated with the Israeli government or official press office. Spreads unattributed political claims.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "trumps_kitten", label: "Partisan Misinformation", category: "misinformation",
+    blocked: false, trust: 12,
+    detail: "Posts MAGA-aligned content including false claims about elections, immigration, and political opponents. Multiple posts labelled misleading by Community Notes.",
+    source: "Community Notes (Twitter)"
   },
 
   // ═══ ALTERNATIVE / ADVOCACY MEDIA ════════════════════════════════════════

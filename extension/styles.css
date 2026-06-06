@@ -166,6 +166,15 @@
 }
 .pp-rescan-btn:hover { background: rgba(124,58,237,0.1); }
 
+/* Compact / icon-only sidebar (Twitter narrows nav to icons only) */
+#pluto-sidebar-widget.psw-compact .psw-body { display: none; }
+#pluto-sidebar-widget.psw-compact .psw-pill { display: none !important; }
+#pluto-sidebar-widget.psw-compact .psw-wrap {
+  padding: 9px;
+  justify-content: center;
+  gap: 0;
+}
+
 /* Twitter dark mode — Twitter sets class="dark" on <html> */
 html.dark .psw-name  { color: #f1f5f9; }
 html.dark .psw-sub   { color: #a78bfa; }
