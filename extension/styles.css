@@ -41,6 +41,10 @@
 #pluto-sidebar-widget {
   animation: pluto-sidebar-in 0.35s cubic-bezier(.22,1,.36,1) both;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: inherit;
 }
 
 .psw-wrap {

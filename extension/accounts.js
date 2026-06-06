@@ -1250,7 +1250,7 @@ const PLUTO_ACCOUNTS = [
   },
   {
     handle: "troopwatchiran", label: "Unverified Iran Claims", category: "misinformation",
-    blocked: false, trust: 22,
+    blocked: true, trust: 22,
     detail: "Posts claims about Iranian military movements and proxy forces without verifiable sourcing. Content amplified by both pro-Iran and alarmist accounts before confirmation.",
     source: "Community Notes (Twitter)"
   },
@@ -1349,7 +1349,7 @@ const PLUTO_ACCOUNTS = [
   },
   {
     handle: "secretsqrl123", label: "Unverified Claims", category: "misinformation",
-    blocked: false, trust: 25,
+    blocked: true, trust: 25,
     detail: "Posts geopolitical and intelligence claims without verifiable sourcing.",
     source: "Community Notes (Twitter)"
   },
@@ -1361,7 +1361,7 @@ const PLUTO_ACCOUNTS = [
   },
   {
     handle: "firstsquawk", label: "Unverified Breaking News", category: "misinformation",
-    blocked: false, trust: 28,
+    blocked: true, trust: 28,
     detail: "Rapid-fire breaking news alerts, often posted before information can be verified. Some alerts have required subsequent retraction.",
     source: "Community Notes (Twitter)"
   },
@@ -1373,37 +1373,37 @@ const PLUTO_ACCOUNTS = [
   },
   {
     handle: "intelFromBrian", label: "Unverified Intel Claims", category: "misinformation",
-    blocked: false, trust: 22,
+    blocked: true, trust: 22,
     detail: "Posts 'intelligence' and conflict claims without verifiable sources or traceable credentials. Presents speculation as confirmed intel.",
     source: "Community Notes (Twitter)"
   },
   {
     handle: "ME_Observer_", label: "Unverified ME Claims", category: "misinformation",
-    blocked: false, trust: 25,
+    blocked: true, trust: 25,
     detail: "Posts Middle East conflict updates without consistent source verification. Claims frequently circulate before independent confirmation.",
     source: "Community Notes (Twitter)"
   },
   {
     handle: "MEC_Tracker", label: "Unverified Conflict Tracker", category: "misinformation",
-    blocked: false, trust: 24,
+    blocked: true, trust: 24,
     detail: "Posts Middle East conflict tracking data from open sources without editorial verification. Has spread unconfirmed casualty and strike claims.",
     source: "Community Notes (Twitter)"
   },
   {
     handle: "GlobalNewsHQI", label: "Unverified Breaking News", category: "misinformation",
-    blocked: false, trust: 20,
+    blocked: true, trust: 20,
     detail: "Posts rapid-fire breaking news claims across multiple conflict zones without source verification. Content has been disputed by subsequent mainstream reporting.",
     source: "Community Notes (Twitter)"
   },
   {
     handle: "USarmypwr", label: "Unverified Military Claims", category: "misinformation",
-    blocked: false, trust: 20,
+    blocked: true, trust: 20,
     detail: "Posts claims about US military operations and power without traceable sourcing. Not affiliated with the official US Army. Content frequently lacks context.",
     source: "Community Notes (Twitter)"
   },
   {
     handle: "24_70xu", label: "Unverified Claims", category: "misinformation",
-    blocked: false, trust: 18,
+    blocked: true, trust: 18,
     detail: "Posts geopolitical and conflict claims without verifiable sources. Content amplified by state-linked accounts.",
     source: "Community Notes (Twitter)"
   },
@@ -1436,13 +1436,13 @@ const PLUTO_ACCOUNTS = [
   },
   {
     handle: "gunthereagleman", label: "Unverified Claims", category: "misinformation",
-    blocked: false, trust: 20,
+    blocked: true, trust: 20,
     detail: "Posts political and health claims that frequently lack sourcing. Multiple posts have received Community Notes corrections for factual inaccuracies.",
     source: "Community Notes (Twitter)"
   },
   {
     handle: "elonmusk", label: "Unverified Claims", category: "misinformation",
-    blocked: false, trust: 30,
+    blocked: true, trust: 30,
     detail: "Frequently posts unverified claims and political misinformation. Multiple posts have received Community Notes corrections. As owner of X, posts receive outsized algorithmic amplification.",
     source: "Community Notes · PolitiFact · AP Fact Check"
   },
@@ -1454,13 +1454,13 @@ const PLUTO_ACCOUNTS = [
   },
   {
     handle: "MarioNawfal", label: "Unverified Breaking News", category: "misinformation",
-    blocked: false, trust: 18,
+    blocked: true, trust: 18,
     detail: "Hosts X Spaces and posts breaking news claims at high speed without editorial verification. Repeatedly cited for spreading false or premature information during major news events.",
     source: "Community Notes · Reuters fact-checks"
   },
   {
     handle: "ShaykhSulaiman", label: "Unverified Claims", category: "misinformation",
-    blocked: false, trust: 22,
+    blocked: true, trust: 22,
     detail: "Posts religious and geopolitical content that frequently contains unverified claims about conflicts in the Muslim world. Content has been labelled misleading by Community Notes.",
     source: "Community Notes (Twitter)"
   },
@@ -1472,7 +1472,7 @@ const PLUTO_ACCOUNTS = [
   },
   {
     handle: "Netanyahu_News", label: "Unofficial / Unverified", category: "misinformation",
-    blocked: false, trust: 10,
+    blocked: true, trust: 10,
     detail: "Unofficial account claiming to report news about Israeli Prime Minister Netanyahu. Not affiliated with the Israeli government or official press office. Spreads unattributed political claims.",
     source: "Community Notes (Twitter)"
   },
@@ -1487,7 +1487,7 @@ const PLUTO_ACCOUNTS = [
 
   {
     handle: "dropsitenews", label: "Unverified Claims", category: "misinformation",
-    blocked: false, trust: 30,
+    blocked: true, trust: 30,
     detail: "Publishes leaked documents and conflict claims without consistent editorial verification. Some content has been disputed by subsequent mainstream reporting.",
     source: "Community Notes (Twitter)"
   },
@@ -1526,7 +1526,7 @@ const PLUTO_ACCOUNTS = [
 
   {
     handle: "TheOnion", label: "Satire", category: "satire",
-    blocked: false, trust: 100,
+    blocked: true, trust: 100,
     detail: "The Onion is a long-running satirical publication. All content is intentionally fictional. Flagged only to prevent viral spread during breaking news.",
     source: "The Onion, Inc."
   },
