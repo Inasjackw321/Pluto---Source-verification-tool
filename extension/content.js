@@ -353,20 +353,24 @@
       document.querySelector('nav[role="navigation"]');
     if (!sideNav) return;
 
-    const logoLink =
-      sideNav.querySelector('a[href="/home"] svg')?.closest("a") ||
-      sideNav.querySelector('a[aria-label="X"]')                 ||
-      sideNav.querySelector('a[aria-label="Home"]')              ||
-      sideNav.querySelector('a[href="/"]');
-
     const widget = makeSidebarWidget();
-    if (logoLink) {
-      const block = logoLink.closest("li, div[class]") || logoLink.parentElement;
-      block.insertAdjacentElement("afterend", widget);
+
+    // Target: insert BEFORE the Home nav item so widget sits between X logo and Home
+    const homeLink =
+      sideNav.querySelector('a[href="/home"]') ||
+      sideNav.querySelector('a[data-testid="AppTabBar-Home"]') ||
+      sideNav.querySelector('a[aria-label="Home"]');
+
+    if (homeLink) {
+      const homeBlock = homeLink.closest("li, div[class]") || homeLink.parentElement;
+      homeBlock.insertAdjacentElement("beforebegin", widget);
     } else {
-      const firstLink = sideNav.querySelector("a[href]");
-      if (firstLink) {
-        const block = firstLink.closest("li, div[class]") || firstLink.parentElement;
+      // Fallback: insert after the X / site-logo link
+      const logoLink =
+        sideNav.querySelector('a[aria-label="X"]') ||
+        sideNav.querySelector('a[href="/"]');
+      if (logoLink) {
+        const block = logoLink.closest("li, div[class]") || logoLink.parentElement;
         block.insertAdjacentElement("afterend", widget);
       } else {
         sideNav.prepend(widget);
