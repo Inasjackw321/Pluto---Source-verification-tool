@@ -474,15 +474,21 @@
 
   function injectSidebarWidget() {
     if (!settings.showSidebarWidget) return;
+
+    // Remove stale widget if it's been detached from the live DOM
+    const existing = document.getElementById(YT_SIDEBAR_ID);
+    if (existing && !document.body.contains(existing)) existing.remove();
     if (document.getElementById(YT_SIDEBAR_ID)) return;
 
-    // Try multiple YouTube guide container selectors
+    // Try multiple YouTube guide container selectors (order: most specific → fallback)
     const target =
       document.querySelector('ytd-guide-renderer #guide-inner-content') ||
       document.querySelector('#guide-inner-content') ||
       document.querySelector('ytd-guide-renderer #sections') ||
+      document.querySelector('ytd-guide-section-renderer') ||
       document.querySelector('ytd-guide-renderer') ||
-      document.querySelector('#guide-content');
+      document.querySelector('#guide-content') ||
+      document.querySelector('#guide');
     if (!target) return;
 
     target.insertAdjacentElement('afterbegin', makeSidebarWidget());
@@ -503,11 +509,23 @@
     'ytd-compact-video-renderer',
     'ytd-grid-video-renderer',
     'ytd-playlist-video-renderer',
+    'ytd-shelf-renderer',
+    'ytd-reel-item-renderer',
   ].join(', ');
 
   function scan(root) {
     if (!root?.querySelectorAll) return;
     root.querySelectorAll(VIDEO_CARD_SELECTORS).forEach(processVideoCard);
+    // Fallback: catch any channel link not inside a known card element
+    root.querySelectorAll('a[href*="/@"]:not([data-pluto-scanned])').forEach(link => {
+      const card =
+        link.closest('ytd-rich-grid-media') ||
+        link.closest('ytd-video-renderer') ||
+        link.closest('ytd-compact-video-renderer') ||
+        link.closest('ytd-grid-video-renderer') ||
+        link.closest('ytd-playlist-video-renderer');
+      if (card) processVideoCard(card);
+    });
   }
 
   /* ── Page detection ───────────────────────────────────────────── */
@@ -550,16 +568,20 @@
     // Re-inject sidebar widget — YouTube may rebuild guide DOM on some navigations
     document.getElementById(YT_SIDEBAR_ID)?.remove();
     detectPage();
-    [100, 400, 800, 1600].forEach(d => setTimeout(() => {
+    [0, 200, 500, 1000, 2000].forEach(d => setTimeout(() => {
       scan(document.body);
       injectSidebarWidget();
     }, d));
   });
 
   /* ── Init ─────────────────────────────────────────────────────── */
-  scan(document.body);
-  detectPage();
-  setInterval(injectSidebarWidget, 600);
-  setInterval(() => scan(document.body), 2500);
+  loadStorage(() => {
+    scan(document.body);
+    detectPage();
+  });
+  // Burst sidebar injection — YouTube guide DOM loads asynchronously
+  [0, 300, 700, 1400, 2500, 4000].forEach(d => setTimeout(injectSidebarWidget, d));
+  setInterval(injectSidebarWidget, 800);
+  setInterval(() => scan(document.body), 2000);
 
 })();
