@@ -277,15 +277,12 @@
     el.id = SIDEBAR_ID;
     el.innerHTML = `
       <div class="psw-wrap" id="pluto-wrap">
-        <div class="psw-icon psw-glow">${PLUTO_LOGO_MD}</div>
-        <div class="psw-body">
-          <div class="psw-name-row">
-            <span class="psw-name">Pluto</span>
-            <span class="psw-beta">BETA</span>
-          </div>
-          <span class="psw-sub" id="pluto-sub">Media Intelligence</span>
+        <div class="psw-icon-wrap psw-glow">
+          ${PLUTO_LOGO_LG}
+          <span class="psw-pill pluto-pill-hide" id="pluto-pill"></span>
         </div>
-        <span class="psw-pill pluto-pill-hide" id="pluto-pill"></span>
+        <span class="psw-name">Pluto</span>
+        <span class="psw-beta">BETA</span>
       </div>
       <div class="pluto-panel" id="${PANEL_ID}">
         <div class="pp-header"><span>Flagged on this page</span><span class="pp-shortcut">Alt+P</span></div>
@@ -317,8 +314,7 @@
 
   function updateSidebarCount() {
     const pill = document.getElementById("pluto-pill");
-    const sub  = document.getElementById("pluto-sub");
-    if (!pill || !sub) return;
+    if (!pill) return;
     if (sessionCount > 0) {
       const prev = parseInt(pill.dataset.n || "0");
       pill.textContent = sessionCount;
@@ -329,13 +325,11 @@
         void pill.offsetWidth;
         pill.classList.add("pluto-bump");
       }
-      sub.textContent = sessionCount === 1 ? "1 flag this page" : `${sessionCount} flags this page`;
       // Refresh open panel
       const p = document.getElementById(PANEL_ID);
       if (p?.classList.contains("pp-open")) renderPanel();
     } else {
       pill.classList.add("pluto-pill-hide");
-      sub.textContent = "Media Intelligence";
     }
   }
 

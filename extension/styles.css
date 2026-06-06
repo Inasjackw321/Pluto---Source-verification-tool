@@ -36,68 +36,86 @@
   to   { transform: rotate(360deg); }
 }
 
-/* ── Sidebar widget ──────────────────────────────────────── */
+/* ── Sidebar widget — styled to match Twitter nav items ─── */
 
 #pluto-sidebar-widget {
   animation: pluto-sidebar-in 0.35s cubic-bezier(.22,1,.36,1) both;
-  margin: 2px 0 4px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .psw-wrap {
-  display: flex; align-items: center; gap: 12px;
-  padding: 9px 12px;
-  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 9999px;
   cursor: pointer;
   transition: background 0.18s;
   user-select: none;
+  width: fit-content;
 }
 .psw-wrap:hover  { background: rgba(124,58,237,0.09); }
 .psw-wrap:active { background: rgba(124,58,237,0.15); }
 
-.psw-icon { flex-shrink: 0; display: flex; align-items: center; }
+/* Icon container — holds the SVG and the count badge */
+.psw-icon-wrap {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
 
 .psw-glow svg {
   filter: drop-shadow(0 0 4px rgba(124,58,237,0.5));
   transition: filter 0.25s;
 }
 .psw-wrap:hover .psw-glow svg {
-  filter: drop-shadow(0 0 7px rgba(124,58,237,0.75));
+  filter: drop-shadow(0 0 8px rgba(124,58,237,0.8));
 }
 
-.psw-body {
-  display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1;
-}
-.psw-name-row {
-  display: flex; align-items: center; gap: 6px;
-}
 .psw-name {
-  font-size: 19px; font-weight: 800; letter-spacing: -0.5px;
-  color: #0f172a; line-height: 1.1;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1;
+  white-space: nowrap;
 }
 .psw-beta {
   font-size: 9px; font-weight: 700; letter-spacing: 0.3px;
   color: #9f7aea; border: 1px solid rgba(159,122,234,0.5);
-  border-radius: 5px; padding: 1px 4px; line-height: 1.3;
-  flex-shrink: 0; margin-top: 2px;
-}
-.psw-sub {
-  font-size: 11px; font-weight: 500; color: #7c3aed;
-  line-height: 1.1; transition: color 0.2s;
+  border-radius: 5px; padding: 1px 5px; line-height: 1.3;
+  flex-shrink: 0; align-self: center;
 }
 
+/* Count badge — overlaid top-right of the icon */
 .psw-pill {
-  display: none; align-items: center; justify-content: center;
-  min-width: 20px; height: 20px; padding: 0 5px;
+  position: absolute;
+  top: -5px; right: -7px;
+  display: none;
+  align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 4px;
   background: #7c3aed; color: #fff;
-  border-radius: 10px; font-size: 11px; font-weight: 800;
+  border-radius: 9px; font-size: 10px; font-weight: 800;
   line-height: 1;
-  box-shadow: 0 0 0 1.5px rgba(255,255,255,0.15) inset;
-  flex-shrink: 0;
+  box-shadow: 0 0 0 2px #fff;
 }
 .psw-pill:not(.pluto-pill-hide) { display: inline-flex; }
 .psw-pill.pluto-bump { animation: pluto-bump 0.45s cubic-bezier(.22,1,.36,1); }
-.psw-pill.pluto-pill-hide { display: none; }
+.psw-pill.pluto-pill-hide { display: none !important; }
+
+/* Compact / icon-only sidebar (Twitter narrows nav to icons only) */
+#pluto-sidebar-widget.psw-compact .psw-name,
+#pluto-sidebar-widget.psw-compact .psw-beta { display: none; }
+#pluto-sidebar-widget.psw-compact .psw-wrap  { gap: 0; }
+
+/* Twitter dark mode */
+html.dark .psw-name  { color: #f1f5f9; }
+html.dark .psw-pill  { box-shadow: 0 0 0 2px #000; }
+html.dark .psw-wrap:hover  { background: rgba(167,139,250,0.1); }
+html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
 
 /* ── Sidebar mini-panel (inline expand) ─────────────────── */
 
@@ -165,22 +183,6 @@
   white-space: nowrap; flex-shrink: 0;
 }
 .pp-rescan-btn:hover { background: rgba(124,58,237,0.1); }
-
-/* Compact / icon-only sidebar (Twitter narrows nav to icons only) */
-#pluto-sidebar-widget.psw-compact .psw-body { display: none; }
-#pluto-sidebar-widget.psw-compact .psw-pill { display: none !important; }
-#pluto-sidebar-widget.psw-compact .psw-wrap {
-  padding: 9px;
-  justify-content: center;
-  gap: 0;
-}
-
-/* Twitter dark mode — Twitter sets class="dark" on <html> */
-html.dark .psw-name  { color: #f1f5f9; }
-html.dark .psw-sub   { color: #a78bfa; }
-html.dark .psw-beta  { color: #a78bfa; border-color: rgba(167,139,250,0.4); }
-html.dark .psw-wrap:hover  { background: rgba(167,139,250,0.1); }
-html.dark .psw-wrap:active { background: rgba(167,139,250,0.18); }
 
 /* ── Inline badge ────────────────────────────────────────── */
 
