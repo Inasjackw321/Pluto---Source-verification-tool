@@ -21,31 +21,19 @@ const PLUTO_CATEGORIES = {
     textIcon: "◉"
   },
   "misinformation": {
-    label: "Unverified Claims",
-    color: "#991b1b",
-    bgColor: "#fef2f2",
-    borderColor: "#ef4444",
-    dotColor: "#ef4444",
-    icon: `<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1L11 10H1L6 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M6 5v2.5M6 9v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-    textIcon: "▲"
+    label: "Unverified Claims", hidden: true,
+    color: "#991b1b", bgColor: "#fef2f2", borderColor: "#ef4444", dotColor: "#ef4444",
+    icon: ``, textIcon: "▲"
   },
   "conspiracy": {
-    label: "Conspiracy / Fringe",
-    color: "#6d28d9",
-    bgColor: "#f5f3ff",
-    borderColor: "#8b5cf6",
-    dotColor: "#8b5cf6",
-    icon: `<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="2" fill="currentColor"/><path d="M6 1v1M6 10v1M1 6h1M10 6h1M2.6 2.6l.7.7M8.7 8.7l.7.7M2.6 9.4l.7-.7M8.7 3.3l.7-.7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>`,
-    textIcon: "✕"
+    label: "Conspiracy / Fringe", hidden: true,
+    color: "#6d28d9", bgColor: "#f5f3ff", borderColor: "#8b5cf6", dotColor: "#8b5cf6",
+    icon: ``, textIcon: "✕"
   },
   "satire": {
-    label: "Satire",
-    color: "#1d4ed8",
-    bgColor: "#eff6ff",
-    borderColor: "#3b82f6",
-    dotColor: "#3b82f6",
-    icon: `<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 9c0-3.3 2.7-6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10 9c0-3.3-2.7-6-6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/><circle cx="6" cy="10" r="1" fill="currentColor"/></svg>`,
-    textIcon: "ꙅ"
+    label: "Satire", hidden: true,
+    color: "#1d4ed8", bgColor: "#eff6ff", borderColor: "#3b82f6", dotColor: "#3b82f6",
+    icon: ``, textIcon: "ꙅ"
   }
 };
 
@@ -202,6 +190,489 @@ const PLUTO_ACCOUNTS = [
     blocked: false, trust: 22, country: "CN",
     detail: "CCTV News — parent broadcaster of CGTN. Directly controlled by the CCP's Propaganda Department.",
     source: "State Administration of Radio and Television (China)"
+  },
+
+  // ═══ RUSSIAN STATE MEDIA — ADDITIONAL OUTLETS ════════════════════════════
+
+  {
+    handle: "SputnikMundo", label: "Sputnik Mundo (ES)", category: "state-propaganda",
+    blocked: false, trust: 5, country: "RU",
+    detail: "Spanish-language arm of Sputnik. Part of Rossiya Segodnya. EU-banned since 2022, suspended from Facebook and Instagram.",
+    source: "EU Reg. 2022/879 · FARA"
+  },
+  {
+    handle: "SputnikFrance", label: "Sputnik France", category: "state-propaganda",
+    blocked: false, trust: 5, country: "RU",
+    detail: "French-language Sputnik outlet. Closed down in France after EU sanctions. Continues operating online outside EU territory.",
+    source: "EU Reg. 2022/350"
+  },
+  {
+    handle: "Sputnik_Arabic", label: "Sputnik Arabic", category: "state-propaganda",
+    blocked: false, trust: 5, country: "RU",
+    detail: "Arabic-language Sputnik targeting Middle East and North Africa. Same ownership structure as all Sputnik brands.",
+    source: "EU Reg. 2022/879 · FARA"
+  },
+  {
+    handle: "SputnikNewsUS", label: "Sputnik US", category: "state-propaganda",
+    blocked: false, trust: 5, country: "RU",
+    detail: "US-facing Sputnik outlet, registered as a foreign agent under FARA before its closure. Continues digital distribution.",
+    source: "FARA registration · DOJ"
+  },
+  {
+    handle: "Ruptly", label: "Russian State Video Agency", category: "state-propaganda",
+    blocked: false, trust: 8, country: "RU",
+    detail: "Ruptly is RT's international video newswire. Provides footage to broadcasters worldwide. EU-sanctioned entity under Reg. 2022/350.",
+    source: "EU Reg. 2022/350"
+  },
+  {
+    handle: "RT_UK", label: "Russian State Media (UK)", category: "state-propaganda",
+    blocked: true, trust: 4, country: "RU",
+    detail: "RT UK — British arm of RT. Ofcom revoked its broadcast licence in 2022. EU distribution banned. Continues streaming online.",
+    source: "Ofcom 2022 · EU Reg. 2022/350"
+  },
+  {
+    handle: "RT_India", label: "Russian State Media (IN)", category: "state-propaganda",
+    blocked: false, trust: 6, country: "RU",
+    detail: "RT India — South Asian arm of RT. Targets Indian audiences with pro-Kremlin narratives on Ukraine, the West, and regional conflicts.",
+    source: "EU Reg. 2022/879"
+  },
+  {
+    handle: "ZvezdaTV_ru", label: "Russian Military TV", category: "state-propaganda",
+    blocked: false, trust: 3, country: "RU",
+    detail: "Zvezda is Russia's Ministry of Defence television channel. Broadcasts war coverage exclusively reflecting official Russian military narratives.",
+    source: "Russian MoD · EU Reg. 2022/879"
+  },
+  {
+    handle: "MargaritaSimonyan", label: "RT Editor-in-Chief", category: "state-propaganda",
+    blocked: false, trust: 4, country: "RU",
+    detail: "Margarita Simonyan is RT's editor-in-chief and Kremlin insider. Her personal account repeats and amplifies official Russian war narratives directly.",
+    source: "EU sanctions list · Kremlin press pool"
+  },
+  {
+    handle: "Redfishstream", label: "RT-Linked Media", category: "state-propaganda",
+    blocked: false, trust: 9, country: "RU",
+    detail: "Redfish Media was founded with RT funding. Produces social-media content aligned with Russian state narratives on protest movements and Western governments.",
+    source: "DFRLab · EU DisinfoLab"
+  },
+  {
+    handle: "SouthFront_org", label: "Russian GRU Operation", category: "state-propaganda",
+    blocked: true, trust: 2, country: "RU",
+    detail: "SouthFront was indicted by a US federal grand jury in 2021 as a Russian foreign intelligence (GRU) influence operation. Produces fake military analysis.",
+    source: "US DOJ indictment 2021 · OFAC sanctions"
+  },
+  {
+    handle: "RT_Documentary", label: "RT Documentary", category: "state-propaganda",
+    blocked: false, trust: 5, country: "RU",
+    detail: "RT's documentary channel. Produces long-form content reinforcing Kremlin geopolitical narratives. EU-sanctioned.",
+    source: "EU Reg. 2022/350"
+  },
+  {
+    handle: "IntelSlava", label: "Pro-Russia Info Ops", category: "state-propaganda",
+    blocked: false, trust: 6, country: "RU",
+    detail: "Intel Slava Z originated as a Telegram channel spreading Russian military narratives and has expanded to other platforms. Frequently first to spread unverified Russian claims.",
+    source: "Bellingcat · EUvsDisinfo"
+  },
+
+  // ═══ RUSSIAN DIPLOMATIC / EMBASSY ACCOUNTS ════════════════════════════════
+
+  {
+    handle: "RussiaUN", label: "Russian UN Mission", category: "state-propaganda",
+    blocked: false, trust: 20, country: "RU",
+    detail: "Russia's Permanent Mission to the United Nations. Posts formal statements defending Russian military operations and blocking humanitarian resolutions.",
+    source: "UN Security Council records"
+  },
+  {
+    handle: "RusEmbUSA", label: "Russian Embassy (US)", category: "state-propaganda",
+    blocked: false, trust: 15, country: "RU",
+    detail: "Official Russian Embassy account targeting US audiences. Regularly publishes anti-NATO and anti-Ukraine messaging.",
+    source: "US State Department · FARA"
+  },
+  {
+    handle: "RusEmbLondon", label: "Russian Embassy (UK)", category: "state-propaganda",
+    blocked: false, trust: 15, country: "RU",
+    detail: "Russian Embassy London account. Used to spread disinformation about the Salisbury chemical attack and UK policy on Ukraine.",
+    source: "UK FCDO · Bellingcat"
+  },
+  {
+    handle: "RusEmbOttawa", label: "Russian Embassy (CA)", category: "state-propaganda",
+    blocked: false, trust: 15, country: "RU",
+    detail: "Russian Embassy Canada. Posts anti-NATO and pro-Kremlin messaging targeting Canadian policy audiences.",
+    source: "Global Affairs Canada"
+  },
+
+  // ═══ CHINESE STATE MEDIA — ADDITIONAL OUTLETS ════════════════════════════
+
+  {
+    handle: "ChinaDaily", label: "CCP State Newspaper", category: "state-propaganda",
+    blocked: false, trust: 20, country: "CN",
+    detail: "China Daily is directly funded and controlled by the CCP Propaganda Department. Paid to insert its content into Western newspapers including The Wall Street Journal and The New York Times.",
+    source: "DOJ FARA filing · NED 2020"
+  },
+  {
+    handle: "HuXijin_GT", label: "Global Times Editor", category: "state-propaganda",
+    blocked: false, trust: 12, country: "CN",
+    detail: "Former editor-in-chief of Global Times. Known for aggressive nationalist commentary that amplifies CCP positions. Posts treated as semi-official Chinese government signals.",
+    source: "MERICS · Oxford Internet Institute"
+  },
+  {
+    handle: "MFA_China", label: "Chinese Foreign Ministry", category: "state-propaganda",
+    blocked: false, trust: 20, country: "CN",
+    detail: "China's Ministry of Foreign Affairs official account. Distributes official Chinese government positions, including denials of human rights violations.",
+    source: "Chinese Foreign Ministry"
+  },
+  {
+    handle: "SpokespersonCHN", label: "Chinese MFA Spokesperson", category: "state-propaganda",
+    blocked: false, trust: 18, country: "CN",
+    detail: "Official Chinese MFA spokesperson account. Coordinates disinformation narratives on Taiwan, Xinjiang, and COVID-19 origins.",
+    source: "Stanford Internet Observatory 2020"
+  },
+  {
+    handle: "CGTNAfrica", label: "Chinese State Media (Africa)", category: "state-propaganda",
+    blocked: false, trust: 22, country: "CN",
+    detail: "CGTN Africa — Chinese state media targeting the African continent. Part of Beijing's broader influence strategy to shape narratives across Africa.",
+    source: "CSIS China Africa Report · Twitter state-media label"
+  },
+  {
+    handle: "ChinaEmbassyUK", label: "Chinese Embassy (UK)", category: "state-propaganda",
+    blocked: false, trust: 18, country: "CN",
+    detail: "Chinese Embassy London. Used to spread disinformation about Hong Kong, Xinjiang, and COVID-19 origins at UK audiences.",
+    source: "UK FCDO · Stanford Internet Observatory"
+  },
+  {
+    handle: "ChinaEmbassyUSA", label: "Chinese Embassy (US)", category: "state-propaganda",
+    blocked: false, trust: 18, country: "CN",
+    detail: "Chinese Embassy Washington. Regularly posts CCP narratives on Taiwan, Tibet, and Xinjiang at US audiences.",
+    source: "DOJ · FARA"
+  },
+  {
+    handle: "BJReview", label: "CCP-Affiliated Magazine", category: "state-propaganda",
+    blocked: false, trust: 20, country: "CN",
+    detail: "Beijing Review is an English-language magazine published under CCP supervision since 1958. Content reflects official CCP positions on all major geopolitical issues.",
+    source: "CCP Central Propaganda Department"
+  },
+  {
+    handle: "ChinaDailyUSA", label: "CCP Newspaper (US)", category: "state-propaganda",
+    blocked: false, trust: 18, country: "CN",
+    detail: "China Daily's US edition. Registered as a foreign agent under FARA. Paid to place advertorial supplements in major US publications.",
+    source: "DOJ FARA filing"
+  },
+  {
+    handle: "ChinaDailyEurope", label: "CCP Newspaper (EU)", category: "state-propaganda",
+    blocked: false, trust: 18, country: "CN",
+    detail: "China Daily European edition. Distributes CCP narratives to European audiences. Funded by China's State Council Information Office.",
+    source: "EU DisinfoLab · Vrije Universiteit Brussel"
+  },
+  {
+    handle: "CRI_English", label: "China Radio International", category: "state-propaganda",
+    blocked: false, trust: 20, country: "CN",
+    detail: "CRI is China's official state radio. Broadcast across five continents. Has secretly funded and managed local radio stations in multiple countries to amplify CCP messaging.",
+    source: "Reuters investigation 2015 · FARA"
+  },
+  {
+    handle: "CGTNFrancais", label: "Chinese State Media (FR)", category: "state-propaganda",
+    blocked: false, trust: 22, country: "CN",
+    detail: "CGTN French — French-language arm of China Global Television Network. CCP-controlled. Targets Francophone African and European audiences.",
+    source: "EU DisinfoLab · OFCOM equivalent France"
+  },
+  {
+    handle: "CGTN_Arabic", label: "Chinese State Media (AR)", category: "state-propaganda",
+    blocked: false, trust: 22, country: "CN",
+    detail: "CGTN Arabic — targets Middle East and North Africa audiences with CCP-approved narratives.",
+    source: "Twitter state-media label · EU DisinfoLab"
+  },
+  {
+    handle: "ChinaEmbGermany", label: "Chinese Embassy (DE)", category: "state-propaganda",
+    blocked: false, trust: 18, country: "CN",
+    detail: "Chinese Embassy Berlin. Documented for spreading Xinjiang denial narratives and COVID-19 origin disinformation in German.",
+    source: "German BfV annual report 2022"
+  },
+
+  // ═══ IRANIAN STATE / PROXY MEDIA — ADDITIONAL ════════════════════════════
+
+  {
+    handle: "Mehr_English", label: "IRGC-Linked News Agency", category: "state-propaganda",
+    blocked: false, trust: 10, country: "IR",
+    detail: "Mehr News Agency has close institutional ties to the IRGC. English-language service targets international audiences with Iranian state narratives.",
+    source: "Bellingcat · US Treasury IRGC links"
+  },
+  {
+    handle: "HispanTV", label: "Iranian Spanish-Language TV", category: "state-propaganda",
+    blocked: false, trust: 8, country: "IR",
+    detail: "HispanTV is Iran's Spanish-language state television channel, targeting Latin American audiences. Funded by Islamic Republic of Iran Broadcasting.",
+    source: "IRIB Charter · CONATEL Venezuela"
+  },
+  {
+    handle: "Al_Alam_News", label: "Iranian Arabic TV", category: "state-propaganda",
+    blocked: false, trust: 8, country: "IR",
+    detail: "Al-Alam (The World) is Iran's Arabic-language state TV channel. Broadcasts across the Arab world with pro-Iran, anti-Israel and anti-US messaging.",
+    source: "IRIB Charter · Arab Media Institute"
+  },
+  {
+    handle: "IranMission", label: "Iran UN Mission", category: "state-propaganda",
+    blocked: false, trust: 15, country: "IR",
+    detail: "Iran's Permanent Mission to the United Nations. Official diplomatic communications often used to spread state narratives on nuclear programme and regional conflicts.",
+    source: "IAEA reports · UN Security Council"
+  },
+  {
+    handle: "PressTV_Arabic", label: "Iranian State Media (AR)", category: "state-propaganda",
+    blocked: false, trust: 6, country: "IR",
+    detail: "PressTV's Arabic-language arm. Same IRIB ownership as English PressTV. Ofcom-revoked broadcaster targeting Arab-language audiences.",
+    source: "Ofcom 2021 · IRIB Charter"
+  },
+  {
+    handle: "iFilmTV_en", label: "Iranian State Entertainment TV", category: "state-propaganda",
+    blocked: false, trust: 10, country: "IR",
+    detail: "iFilm is an Iranian state broadcaster under IRIB producing Farsi/dubbed content that reinforces Islamic Republic cultural narratives.",
+    source: "IRIB Charter"
+  },
+  {
+    handle: "MashreghNews", label: "IRGC-Aligned Media", category: "state-propaganda",
+    blocked: false, trust: 8, country: "IR",
+    detail: "Mashregh News is closely linked to the IRGC and publishes hardline content on regional conflicts, foreign policy, and domestic dissent.",
+    source: "Bellingcat · IranWire 2021"
+  },
+  {
+    handle: "KayhanIntl", label: "Iranian Hardline Newspaper", category: "state-propaganda",
+    blocked: false, trust: 6, country: "IR",
+    detail: "Kayhan International is the English arm of Kayhan, whose editor is personally appointed by Iran's Supreme Leader. Among the most hardline pro-regime outlets.",
+    source: "Iranian Constitution · Human Rights Watch"
+  },
+  {
+    handle: "AlMayadeen_en", label: "Iran-Aligned Lebanese TV", category: "state-propaganda",
+    blocked: false, trust: 14, country: "IR",
+    detail: "Al Mayadeen is a Beirut-based TV channel with documented Iranian and Hezbollah funding. Covers the region from a Resistance Axis perspective.",
+    source: "Carnegie Middle East Center · Bellingcat"
+  },
+  {
+    handle: "AlManarNews", label: "Hezbollah TV (Banned)", category: "state-propaganda",
+    blocked: true, trust: 2, country: "LB",
+    detail: "Al-Manar is Hezbollah's official television channel. Designated as a terrorist organisation's media arm by the US Treasury. Banned in France, Germany, Spain, and the US.",
+    source: "US Treasury SDN list 2006 · EU terrorist list"
+  },
+  {
+    handle: "AlAhedNews", label: "Hezbollah Media", category: "state-propaganda",
+    blocked: false, trust: 5, country: "LB",
+    detail: "Al-Ahed News is Hezbollah's official online news outlet. Designated alongside Al-Manar as a Specially Designated Global Terrorist (SDGT) entity.",
+    source: "US Treasury SDN list"
+  },
+
+  // ═══ VENEZUELAN / CUBAN / LATIN AMERICAN STATE MEDIA ═════════════════════
+
+  {
+    handle: "NicolasMaduro", label: "Venezuelan President", category: "state-propaganda",
+    blocked: false, trust: 8, country: "VE",
+    detail: "Nicolas Maduro's official account. Posts from Venezuela's authoritarian government include denial of human rights abuses and electoral fraud allegations.",
+    source: "UN Human Rights Council 2020 · ICC referral"
+  },
+  {
+    handle: "VTVcanalOficial", label: "Venezuelan State TV", category: "state-propaganda",
+    blocked: false, trust: 10, country: "VE",
+    detail: "Venezolana de Televisión (VTV) is Venezuela's state broadcaster under CONATEL. Suppresses independent journalism and amplifies Maduro government narratives.",
+    source: "RSF Venezuela report · CPJ"
+  },
+  {
+    handle: "Granma_Digital", label: "Cuban Communist Party Paper", category: "state-propaganda",
+    blocked: false, trust: 8, country: "CU",
+    detail: "Granma is the official newspaper of the Communist Party of Cuba. All content reflects the party line. No independent journalism.",
+    source: "CPJ Cuba press freedom report"
+  },
+  {
+    handle: "CubaDebate", label: "Cuban State Media", category: "state-propaganda",
+    blocked: false, trust: 10, country: "CU",
+    detail: "CubaDebate is a Cuban state media outlet that defends the Castro/Díaz-Canel government and attacks US policy. No independent editorial oversight.",
+    source: "RSF Cuba report"
+  },
+  {
+    handle: "RadioHavana", label: "Cuban State Radio", category: "state-propaganda",
+    blocked: false, trust: 10, country: "CU",
+    detail: "Radio Havana Cuba is Cuba's international state broadcaster, operating since 1961. Content reflects Cuban Communist Party positions on geopolitics.",
+    source: "CPJ · Cuba Ministry of Communications"
+  },
+  {
+    handle: "ActualidadRT", label: "RT Spanish / Latin America", category: "state-propaganda",
+    blocked: false, trust: 5, country: "RU",
+    detail: "Actualidad RT is RT's main Spanish-language account targeting Latin American audiences. FARA registered. EU distribution suspended 2022.",
+    source: "FARA · EU Reg. 2022/350"
+  },
+  {
+    handle: "teleSURArabic", label: "Venezuelan State Media (AR)", category: "state-propaganda",
+    blocked: false, trust: 18, country: "VE",
+    detail: "teleSUR's Arabic-language service targeting Middle East audiences. Part of Venezuela's state-owned media network.",
+    source: "CONATEL Venezuela"
+  },
+  {
+    handle: "Prensa_Latina", label: "Cuban State News Agency", category: "state-propaganda",
+    blocked: false, trust: 12, country: "CU",
+    detail: "Prensa Latina is Cuba's state news agency, founded 1959. Distributes Cuban government news internationally with no editorial independence.",
+    source: "Cuban Communist Party · CPJ"
+  },
+
+  // ═══ SYRIAN STATE MEDIA ════════════════════════════════════════════════════
+
+  {
+    handle: "SANAnews_en", label: "Syrian State News Agency", category: "state-propaganda",
+    blocked: false, trust: 5, country: "SY",
+    detail: "SANA is the Syrian Arab Republic's official news agency, under Assad government control. War reporting denies civilian casualties and chemical weapons use.",
+    source: "OPCW reports · UN COI Syria"
+  },
+  {
+    handle: "Syria_Times_en", label: "Syrian State Newspaper", category: "state-propaganda",
+    blocked: false, trust: 6, country: "SY",
+    detail: "Syria Times is a pro-Assad English-language newspaper operating under Syrian Ministry of Information oversight.",
+    source: "Syrian MoI · CPJ Syria"
+  },
+  {
+    handle: "alMasdarNews", label: "Pro-Assad Media", category: "state-propaganda",
+    blocked: false, trust: 10, country: "SY",
+    detail: "Al-Masdar News (The Source) consistently defends the Assad government and publishes pro-Russian narratives on Syria, Libya, and Ukraine.",
+    source: "Bellingcat · EUvsDisinfo"
+  },
+
+  // ═══ BELARUSIAN STATE MEDIA ════════════════════════════════════════════════
+
+  {
+    handle: "BeltaNews", label: "Belarusian State News Agency", category: "state-propaganda",
+    blocked: false, trust: 8, country: "BY",
+    detail: "BELTA is Belarus's official state news agency under the Lukashenko government. Coverage denies the 2020 election fraud and protest crackdowns.",
+    source: "EU sanctions Belarus 2020 · RSF"
+  },
+  {
+    handle: "BelarusMFA_", label: "Belarusian Foreign Ministry", category: "state-propaganda",
+    blocked: false, trust: 10, country: "BY",
+    detail: "Belarus's Ministry of Foreign Affairs account. Defends the Lukashenko regime's forced landing of Ryanair flight FR4978 and detention of dissident journalist Roman Protasevich.",
+    source: "ICAO report 2022 · EU sanctions"
+  },
+  {
+    handle: "ONTtvBy", label: "Belarusian State TV", category: "state-propaganda",
+    blocked: false, trust: 5, country: "BY",
+    detail: "ONT is one of Belarus's main state television channels. Broadcasts Lukashenko government propaganda and has aired forced confessions of detainees.",
+    source: "RSF Belarus · Viasna Human Rights Centre"
+  },
+
+  // ═══ TURKISH STATE-ALIGNED MEDIA ═════════════════════════════════════════
+
+  {
+    handle: "A_Haber", label: "Pro-Erdoğan Turkish TV", category: "state-funded",
+    blocked: false, trust: 28, country: "TR",
+    detail: "A Haber (A News) is a Turkish news channel owned by Kalyon Group, a major Erdoğan-linked conglomerate. RSF ranks Turkish media freedom among the lowest in Europe.",
+    source: "RSF Turkey 2023 · Reuters Institute Turkey"
+  },
+  {
+    handle: "YeniSafak_en", label: "Pro-Erdoğan Newspaper (EN)", category: "state-funded",
+    blocked: false, trust: 25, country: "TR",
+    detail: "Yeni Şafak is Turkey's leading pro-government newspaper with close ties to Erdoğan's AKP. English edition distributes Turkish government narratives internationally.",
+    source: "RSF Turkey · Freedom House 2023"
+  },
+  {
+    handle: "Sabah_en", label: "Pro-Erdoğan Newspaper (EN)", category: "state-funded",
+    blocked: false, trust: 28, country: "TR",
+    detail: "Sabah is among Turkey's most widely read pro-government newspapers. Owned by Kalyon Group. English edition targets international audience.",
+    source: "Reuters Institute Digital News Report 2023"
+  },
+
+  // ═══ HUNGARIAN GOVERNMENT-LINKED MEDIA ════════════════════════════════════
+
+  {
+    handle: "HungaryToday", label: "Orbán Government Media (EN)", category: "state-funded",
+    blocked: false, trust: 30, country: "HU",
+    detail: "Hungary Today is an English-language outlet linked to KESMA (Central European Press and Media Foundation), the Orbán government's media consolidation vehicle that controls 80%+ of Hungarian media.",
+    source: "KESMA · RSF Hungary 2023"
+  },
+  {
+    handle: "DailyNewsHungary", label: "Orbán-Linked English Media", category: "state-funded",
+    blocked: false, trust: 30, country: "HU",
+    detail: "Daily News Hungary operates in the same Budapest media landscape dominated by Orbán-linked owners after the 2018 KESMA consolidation.",
+    source: "European Centre for Press and Media Freedom 2022"
+  },
+
+  // ═══ SERBIAN STATE MEDIA ══════════════════════════════════════════════════
+
+  {
+    handle: "RTS_Vesti", label: "Serbian State Broadcaster", category: "state-funded",
+    blocked: false, trust: 35, country: "RS",
+    detail: "RTS (Radio Television Serbia) is Serbia's public broadcaster. Coverage regularly aligns with the Vučić government's pro-Russia tilt and Serbia's EU candidate equivocation.",
+    source: "SEENPM · RSF Serbia 2023"
+  },
+  {
+    handle: "Tanjug_rs", label: "Serbian State News Agency", category: "state-funded",
+    blocked: false, trust: 32, country: "RS",
+    detail: "Tanjug is Serbia's state news agency. Distributes official Serbian government positions, often echoing Kremlin narratives on Kosovo and Ukraine.",
+    source: "EUvsDisinfo · SEENPM"
+  },
+
+  // ═══ PAKISTANI MILITARY MEDIA ════════════════════════════════════════════
+
+  {
+    handle: "OfficialDGISPR", label: "Pakistani Military Media Wing", category: "state-propaganda",
+    blocked: false, trust: 20, country: "PK",
+    detail: "ISPR (Inter-Services Public Relations) is the Pakistani military's powerful media wing. Controls military narrative in Pakistan. Has spread disinformation about Afghanistan, India, and internal security.",
+    source: "RUSI · Freedom Network Pakistan"
+  },
+
+  // ═══ NORTH KOREAN AFFILIATED ══════════════════════════════════════════════
+
+  {
+    handle: "KFA_DPRK", label: "North Korea Friendship Org", category: "state-propaganda",
+    blocked: false, trust: 2, country: "KP",
+    detail: "Korea Friendship Association is a foreign advocacy organisation for the North Korean state. Distributes KCNA content and promotes the Kim regime internationally.",
+    source: "UN Panel of Experts NK · KCNA Watch"
+  },
+
+  // ═══ PRO-RUSSIA WESTERN VOICES (RT contributors / amplifiers) ════════════
+
+  {
+    handle: "GrayzoneNews", label: "Russian State Media Contributor", category: "state-propaganda",
+    blocked: false, trust: 10,
+    detail: "The Grayzone consistently amplifies Russian and Iranian state narratives on Syria, Ukraine, and Venezuela. Multiple staff are documented RT contributors. Has coordinated with Russian disinformation campaigns.",
+    source: "Bellingcat · Stanford Internet Observatory 2020 · EU DisinfoLab"
+  },
+  {
+    handle: "MaxBlumenthal", label: "RT Contributor", category: "state-propaganda",
+    blocked: false, trust: 12,
+    detail: "Max Blumenthal (founder of The Grayzone) is a documented RT contributor. Consistently amplifies Russian state narratives on Ukraine and Syria. Attended Russian state media events.",
+    source: "RT contributor credits · Bellingcat · OCCRP"
+  },
+  {
+    handle: "aaronjmate", label: "RT Contributor", category: "state-propaganda",
+    blocked: false, trust: 14,
+    detail: "Aaron Maté (The Grayzone) is a documented RT contributor who has amplified Kremlin narratives on chemical weapons in Syria and Russian interference investigations.",
+    source: "RT contributor credits · Stanford Internet Observatory"
+  },
+  {
+    handle: "GarlandNixon", label: "RT America Contributor", category: "state-propaganda",
+    blocked: false, trust: 10,
+    detail: "Garland Nixon was a contributor to RT America before its closure. Amplifies Russian state narratives on Ukraine, NATO, and US domestic politics.",
+    source: "RT America contributor credits · FARA disclosure"
+  },
+  {
+    handle: "ScottRitter11", label: "RT Contributor", category: "state-propaganda",
+    blocked: false, trust: 10,
+    detail: "Scott Ritter is a former UN weapons inspector turned RT contributor. Amplifies Russian narratives on Ukraine, regularly appearing on Russian state media.",
+    source: "RT contributor credits · FARA analysis"
+  },
+  {
+    handle: "Eva_Karene", label: "RT Contributor", category: "state-propaganda",
+    blocked: false, trust: 10,
+    detail: "Eva Bartlett is a Canadian blogger and documented RT contributor who has denied Syrian chemical weapons attacks and amplified Russian military narratives.",
+    source: "RT contributor credits · UN Syria COI"
+  },
+  {
+    handle: "PartisanGirl", label: "Pro-Assad / RT Contributor", category: "state-propaganda",
+    blocked: false, trust: 10, country: "SY",
+    detail: "Maram Susli (Partisan Girl) is a pro-Assad commentator and documented RT contributor. Has denied Syrian chemical weapons attacks and spreads Russian geopolitical narratives.",
+    source: "RT contributor credits · Bellingcat Syria"
+  },
+  {
+    handle: "TuckerCarlson", label: "Russian State Media Amplifier", category: "state-propaganda",
+    blocked: false, trust: 22,
+    detail: "Tucker Carlson conducted an exclusive interview with Vladimir Putin distributed by Kremlin channels. US intelligence described his programme as a target for Russian influence operations. Amplifies Kremlin narratives on NATO and Ukraine.",
+    source: "US Intelligence Community 2020 · Kremlin distribution 2024"
+  },
+  {
+    handle: "DouglasMMacG", label: "Russian State Media Amplifier", category: "state-propaganda",
+    blocked: false, trust: 18,
+    detail: "Douglas Macgregor, a former US Army colonel, regularly appears on Russian state media. His forecasts and narratives on Ukraine consistently align with Kremlin positions.",
+    source: "RT appearance logs · EUvsDisinfo"
   },
 
   // ═══ OTHER STATE PROPAGANDA ════════════════════════════════════════════════
