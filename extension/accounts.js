@@ -294,6 +294,213 @@ const PLUTO_ACCOUNTS = [
     source: "EU DisinfoLab 2019 · Oxford Internet Institute · NewsGuard"
   },
 
+  // ═══ RUSSIAN / PRO-RUSSIA INFLUENCERS ════════════════════════════════════
+
+  {
+    handle: "jacksonhinklle", label: "Pro-Russia Influencer", category: "conspiracy",
+    blocked: false, trust: 8,
+    detail: "Consistently amplifies Russian state narratives on Ukraine, Gaza, and US politics. Content reposted by RT and Sputnik. Multiple posts labelled misleading by Community Notes.",
+    source: "Community Notes · NewsGuard · Bellingcat 2023"
+  },
+  {
+    handle: "mylordbebo", label: "Pro-Russia Influencer", category: "conspiracy",
+    blocked: false, trust: 10,
+    detail: "Lord Bebo amplifies Russian state media talking points on Ukraine, Gaza, and Western governments. Content routinely mirrors RT and Sputnik framing with no independent sourcing.",
+    source: "Community Notes · EU DisinfoLab"
+  },
+  {
+    handle: "megatron_ron", label: "Pro-Russia Influencer", category: "conspiracy",
+    blocked: false, trust: 10,
+    detail: "Megatron promotes pro-Russian narratives on Ukraine and the Middle East. Content cited by Russian state media. Posts labelled misleading by Community Notes.",
+    source: "Community Notes · Bellingcat"
+  },
+
+  // ═══ IRANIAN INFLUENCE OPERATIONS ════════════════════════════════════════
+
+  {
+    handle: "iranobserver0", label: "Iran-Linked Account", category: "state-propaganda",
+    blocked: false, trust: 12, country: "IR",
+    detail: "Account promotes Iranian state narratives on regional conflicts and opposes US/Israeli policy. Content pattern consistent with IRGC-linked influence operations.",
+    source: "Community Notes · Stanford Internet Observatory"
+  },
+  {
+    handle: "m_mahdibaba", label: "Iranian State-Linked", category: "state-propaganda",
+    blocked: false, trust: 14, country: "IR",
+    detail: "Posts content aligned with Iranian state media narratives on geopolitical conflicts. Amplifies IRGC-linked media sources.",
+    source: "Community Notes (Twitter)"
+  },
+
+  // ═══ CHINESE STATE MEDIA (additional handles) ════════════════════════════
+
+  {
+    handle: "cgtneurope", label: "Chinese State Media (EU)", category: "state-propaganda",
+    blocked: false, trust: 22, country: "CN",
+    detail: "CGTN Europe — EU bureau of China Global Television Network, controlled by the CCP's Propaganda Department. Continues operating after Ofcom revoked CGTN's UK broadcast licence in 2021.",
+    source: "Ofcom 2021 · EU DisinfoLab"
+  },
+  {
+    handle: "cgtnamerica", label: "Chinese State Media (US)", category: "state-propaganda",
+    blocked: false, trust: 22, country: "CN",
+    detail: "CGTN America — US bureau of China Global Television Network. Registered as a foreign agent under FARA. Identical editorial oversight as CGTNOfficial.",
+    source: "FARA registration 2019"
+  },
+
+  // ═══ MULTI-STATE / BLOC PROPAGANDA ═══════════════════════════════════════
+
+  {
+    handle: "bricsinfo", label: "Bloc Propaganda", category: "state-propaganda",
+    blocked: false, trust: 15,
+    detail: "Promotes BRICS messaging that frequently amplifies Russian, Chinese, and Iranian state narratives on sanctions, the Ukraine war, and Western institutions.",
+    source: "EU DisinfoLab · Community Notes"
+  },
+
+  // ═══ UNVERIFIED WAR / OSINT ACCOUNTS ═════════════════════════════════════
+
+  {
+    handle: "osintwarfare", label: "Unverified War Intel", category: "misinformation",
+    blocked: false, trust: 28,
+    detail: "Posts military intelligence and conflict claims without source verification. Content frequently amplified by state media before independent confirmation.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "rnintel", label: "Unverified Intel Claims", category: "misinformation",
+    blocked: false, trust: 30,
+    detail: "Posts conflict and intelligence claims from open sources. Accuracy varies significantly. No editorial standards or corrections policy.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "menchosint", label: "Unverified OSINT", category: "misinformation",
+    blocked: false, trust: 32,
+    detail: "OSINT aggregator posting conflict updates without verification. Content shared widely before accuracy can be confirmed.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "terror_alarm", label: "Unverified Terror Claims", category: "misinformation",
+    blocked: false, trust: 25,
+    detail: "Posts terror alerts and security incident claims, often before official confirmation. Has published false and retracted alerts. No corrections record.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "dd_geopolitics", label: "Unverified Geopolitics", category: "misinformation",
+    blocked: false, trust: 26,
+    detail: "Posts geopolitical and military updates citing unverified sources. Content frequently amplified by Russian and Iranian state media.",
+    source: "Community Notes · Bellingcat"
+  },
+  {
+    handle: "aq701", label: "Unverified Military Claims", category: "misinformation",
+    blocked: false, trust: 28,
+    detail: "Posts military and conflict claims from open sources without verification. Content has been amplified by state media actors.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "royalintel_", label: "Unverified Intel Claims", category: "misinformation",
+    blocked: false, trust: 28,
+    detail: "Posts geopolitical and intelligence claims without verifiable sources. Presents itself as an authoritative intelligence source without traceable credentials.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "middle_east_spectator", label: "Unverified ME Claims", category: "misinformation",
+    blocked: false, trust: 30,
+    detail: "Posts Middle East conflict updates without consistent source verification. Has spread unconfirmed casualty figures and battle claims.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "secretsqrl123", label: "Unverified Claims", category: "misinformation",
+    blocked: false, trust: 25,
+    detail: "Posts geopolitical and intelligence claims without verifiable sourcing.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "mossadil", label: "Unverified Intel Claims", category: "misinformation",
+    blocked: false, trust: 20,
+    detail: "Posts intelligence and security claims about the Middle East and Israel without verifiable sourcing. Presents content as authoritative intelligence leaks.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "firstsquawk", label: "Unverified Breaking News", category: "misinformation",
+    blocked: false, trust: 28,
+    detail: "Rapid-fire breaking news alerts, often posted before information can be verified. Some alerts have required subsequent retraction.",
+    source: "Community Notes (Twitter)"
+  },
+
+  // ═══ PARTISAN COMMENTATORS ════════════════════════════════════════════════
+
+  {
+    handle: "benshapiro", label: "Partisan Commentary", category: "misinformation",
+    blocked: false, trust: 35,
+    detail: "The Daily Wire, co-founded by Shapiro, is rated low factual reporting by MBFC. Posts regularly contain misleading framing on LGBTQ+ issues, climate, and elections.",
+    source: "Media Bias/Fact Check · PolitiFact · Community Notes"
+  },
+  {
+    handle: "timcast", label: "Unverified Claims", category: "misinformation",
+    blocked: false, trust: 22,
+    detail: "Tim Pool regularly posts political claims without source verification. Multiple posts have been labelled misleading by Community Notes. Has spread election fraud narratives.",
+    source: "Community Notes · NewsGuard"
+  },
+  {
+    handle: "libsoftiktok", label: "Targeted Misinformation", category: "misinformation",
+    blocked: false, trust: 18,
+    detail: "Libs of TikTok has repeatedly doxed educators and healthcare workers, leading to documented harassment campaigns. Multiple temporary suspensions across platforms.",
+    source: "Washington Post investigation 2022 · CCDH report"
+  },
+  {
+    handle: "cobratate", label: "Conspiracy / Fringe", category: "conspiracy",
+    blocked: false, trust: 12,
+    detail: "Andrew Tate spreads misogynistic narratives and conspiracy theories. Banned from YouTube, Facebook, Instagram, and TikTok. Posts frequently receive Community Notes corrections.",
+    source: "Community Notes · CCDH report 2022"
+  },
+  {
+    handle: "gunthereagleman", label: "Unverified Claims", category: "misinformation",
+    blocked: false, trust: 20,
+    detail: "Posts political and health claims that frequently lack sourcing. Multiple posts have received Community Notes corrections for factual inaccuracies.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "elonmusk", label: "Unverified Claims", category: "misinformation",
+    blocked: false, trust: 30,
+    detail: "Frequently posts unverified claims and political misinformation. Multiple posts have received Community Notes corrections. As owner of X, posts receive outsized algorithmic amplification.",
+    source: "Community Notes · PolitiFact · AP Fact Check"
+  },
+
+  // ═══ ALTERNATIVE / ADVOCACY MEDIA ════════════════════════════════════════
+
+  {
+    handle: "dropsitenews", label: "Unverified Claims", category: "misinformation",
+    blocked: false, trust: 30,
+    detail: "Publishes leaked documents and conflict claims without consistent editorial verification. Some content has been disputed by subsequent mainstream reporting.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "euromaidanpr", label: "Ukrainian Nationalist Media", category: "state-propaganda",
+    blocked: false, trust: 30, country: "UA",
+    detail: "EuroMaidan PR promotes exclusively pro-Ukrainian government narratives. All Russian sources treated as false and Ukrainian government claims as fact, without independent verification.",
+    source: "EU DisinfoLab · Bellingcat media audit"
+  },
+  {
+    handle: "in2thinair", label: "Conspiracy / Fringe", category: "conspiracy",
+    blocked: false, trust: 10,
+    detail: "Posts conspiracy theories about governments, vaccines, the New World Order, and geopolitical events without credible sourcing.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "uk_rept", label: "Unverified Claims", category: "misinformation",
+    blocked: false, trust: 25,
+    detail: "Posts UK and European political commentary without consistent source verification. Claims disputed by mainstream fact-checkers.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "gbpolitcs", label: "Unverified Claims", category: "misinformation",
+    blocked: false, trust: 28,
+    detail: "Posts UK political commentary and news claims. Multiple posts labelled misleading by Community Notes for factual inaccuracies.",
+    source: "Community Notes (Twitter)"
+  },
+  {
+    handle: "nyprepper1", label: "Conspiracy / Fringe", category: "conspiracy",
+    blocked: false, trust: 15,
+    detail: "Posts prepper and conspiracy content including unverified claims about government crises, collapse scenarios, and false flag events.",
+    source: "Community Notes (Twitter)"
+  },
+
   // ═══ SATIRE ═══════════════════════════════════════════════════════════════
 
   {
