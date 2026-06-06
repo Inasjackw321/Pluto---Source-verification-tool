@@ -1,0 +1,400 @@
+/* ═══════════════════════════════════════════════════════════════
+   Pluto — YouTube styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Video card badge ────────────────────────────────────────── */
+.pluto-yt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px 2px 5px;
+  border-radius: 5px;
+  border: 1px solid var(--pbd, #d97706);
+  background: var(--pb, #fffbeb);
+  color: var(--pc, #b45309);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1;
+  cursor: default;
+  user-select: none;
+  margin-top: 3px;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+  max-width: 100%;
+}
+
+.pluto-yt-badge:hover { opacity: 0.8; }
+
+.pyb-icon  { font-size: 9px; opacity: 0.85; }
+.pyb-label { font-size: 9.5px; letter-spacing: 0.01em; }
+
+html[dark] .pluto-yt-badge {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: var(--pbd, #d97706);
+  color: var(--pbd, #d97706);
+}
+
+/* ── Thumbnail block overlay ─────────────────────────────────── */
+.pluto-yt-block-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--pb, #fffbeb);
+  opacity: 0.88;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+html[dark] .pluto-yt-block-overlay {
+  background: rgba(12, 12, 12, 0.9);
+  opacity: 1;
+}
+
+.pybo-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: var(--pc, #b45309);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+html[dark] .pybo-inner { color: var(--pbd, #d97706); }
+
+.pybo-icon { font-size: 22px; }
+.pybo-text {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Watch / channel page banner ─────────────────────────────── */
+.pluto-yt-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  margin: 0 0 12px;
+  border-left: 3px solid var(--pbd, #d97706);
+  background: var(--pb, #fffbeb);
+  border-radius: 0 8px 8px 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: pyt-slide-in 0.22s ease;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+html[dark] .pluto-yt-banner {
+  background: rgba(20, 12, 5, 0.9);
+}
+
+@keyframes pyt-slide-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pyt-content { flex: 1; min-width: 0; }
+
+.pyt-row1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.pyt-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--pc, #b45309);
+}
+
+html[dark] .pyt-name { color: var(--pbd, #d97706); }
+
+.pyt-cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--pbd);
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--pc);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+html[dark] .pyt-cat-chip {
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--pbd);
+  border-color: var(--pbd);
+}
+
+.pyt-blocked-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #b91c1c;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+html[dark] .pyt-blocked-chip {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.pyt-detail {
+  font-size: 11px;
+  color: #374151;
+  line-height: 1.5;
+  margin-bottom: 3px;
+}
+
+html[dark] .pyt-detail { color: #cbd5e1; }
+
+.pyt-source {
+  font-size: 9.5px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+html[dark] .pyt-source { color: #64748b; }
+
+.pyt-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.pyt-trust {
+  background: none;
+  border: 1px solid var(--pbd);
+  color: var(--pc);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s;
+  white-space: nowrap;
+}
+
+.pyt-trust:hover { background: rgba(0, 0, 0, 0.06); }
+
+html[dark] .pyt-trust {
+  color: var(--pbd);
+  border-color: var(--pbd);
+}
+
+html[dark] .pyt-trust:hover { background: rgba(255, 255, 255, 0.06); }
+
+.pyt-close {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: color 0.12s;
+}
+
+.pyt-close:hover { color: #374151; }
+html[dark] .pyt-close:hover { color: #e2e8f0; }
+
+/* ── Sidebar widget ──────────────────────────────────────────── */
+.pluto-yt-sidebar {
+  padding: 4px 0 0;
+}
+
+.pys-widget {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.12s;
+  user-select: none;
+  margin: 0 8px;
+}
+
+.pys-widget:hover { background: rgba(124, 58, 237, 0.08); }
+
+html[dark] .pys-widget:hover { background: rgba(124, 58, 237, 0.12); }
+
+.pys-glow svg {
+  filter: drop-shadow(0 0 4px rgba(124, 58, 237, 0.5));
+  display: block;
+  flex-shrink: 0;
+}
+
+.pys-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pys-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e1b4b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  white-space: nowrap;
+}
+
+html[dark] .pys-name { color: #f1f5f9; }
+
+.pys-sub {
+  font-size: 10px;
+  color: #7c3aed;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  white-space: nowrap;
+}
+
+.pys-beta {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #7c3aed;
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Sidebar panel ───────────────────────────────────────────── */
+.pluto-yt-panel {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.28s cubic-bezier(.22, 1, .36, 1), opacity 0.2s ease;
+  background: rgba(13, 13, 22, 0.97);
+  border: 1px solid rgba(124, 58, 237, 0.22);
+  border-radius: 10px;
+  margin: 4px 8px 6px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  position: relative;
+  z-index: 100;
+}
+
+.pluto-yt-panel.pyp-open {
+  max-height: 320px;
+  opacity: 1;
+}
+
+.pyp-header {
+  padding: 9px 12px 7px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.55px;
+  color: #64748b;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pyp-shortcut {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: #475569;
+  text-transform: none;
+}
+
+.pyp-list {
+  overflow-y: auto;
+  max-height: 230px;
+}
+
+.pyp-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.pyp-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--pbd);
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--pbd);
+  font-size: 9.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.pyp-handle {
+  font-size: 11px;
+  color: #94a3b8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pyp-empty {
+  padding: 14px 12px;
+  font-size: 11px;
+  color: #475569;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.pyp-footer {
+  padding: 7px 12px;
+  font-size: 10px;
+  color: #475569;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pyp-rescan {
+  background: none;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  color: #a78bfa;
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pyp-rescan:hover { background: rgba(124, 58, 237, 0.1); }

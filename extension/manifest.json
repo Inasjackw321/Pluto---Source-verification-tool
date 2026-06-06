@@ -2,15 +2,17 @@
   "manifest_version": 3,
   "name": "Pluto — Media Intelligence",
   "short_name": "Pluto",
-  "version": "3.0.0",
-  "description": "Pluto flags state propaganda, misinformation, and satire on Twitter/X — with source citations and smart content controls.",
+  "version": "3.1.0",
+  "description": "Pluto flags state propaganda on Twitter/X and YouTube — with source citations and smart content controls.",
   "permissions": [
     "storage",
     "contextMenus"
   ],
   "host_permissions": [
     "https://twitter.com/*",
-    "https://x.com/*"
+    "https://x.com/*",
+    "https://www.youtube.com/*",
+    "https://youtube.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -20,6 +22,12 @@
       "matches": ["https://twitter.com/*", "https://x.com/*"],
       "js": ["accounts.js", "content.js"],
       "css": ["styles.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://www.youtube.com/*", "https://youtube.com/*"],
+      "js": ["accounts.js", "youtube-content.js"],
+      "css": ["youtube-styles.css"],
       "run_at": "document_idle"
     }
   ],
