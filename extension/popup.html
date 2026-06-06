@@ -365,11 +365,9 @@
       <div class="add-row">
         <input id="handleInput" type="text" placeholder="@username" autocomplete="off" spellcheck="false" />
         <select id="catSelect">
-          <option value="state-propaganda">State prop.</option>
-          <option value="state-funded">State-funded</option>
-          <option value="misinformation">Unverified</option>
-          <option value="conspiracy">Conspiracy</option>
-          <option value="satire">Satire</option>
+          <option value="state-propaganda">State-Affiliated</option>
+          <option value="state-funded">State-Funded</option>
+          <option value="misinformation">Bad Source</option>
         </select>
         <button class="btn-primary" id="addBtn">Add</button>
       </div>
@@ -494,12 +492,16 @@
     <div class="about-section">
       <h3>Warning categories</h3>
       <div class="cat-row">
-        <span class="cat-chip sp">★ State Propaganda</span>
-        <span class="cat-desc">Government-controlled, no editorial independence. Worst cases have content blocked.</span>
+        <span class="cat-chip sp">★ State-Affiliated</span>
+        <span class="cat-desc">Government-controlled with no editorial independence. Worst cases have content blocked.</span>
       </div>
       <div class="cat-row">
         <span class="cat-chip sf">◉ State-Funded</span>
-        <span class="cat-desc">Funded by a government but may retain some editorial independence.</span>
+        <span class="cat-desc">Funded by a government; may retain partial independence but serves state interests.</span>
+      </div>
+      <div class="cat-row">
+        <span class="cat-chip mi">▲ Bad Source</span>
+        <span class="cat-desc">Consistently low accuracy, partisan fringe, or documented misinformation track record.</span>
       </div>
     </div>
 

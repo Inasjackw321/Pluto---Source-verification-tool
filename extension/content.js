@@ -377,7 +377,10 @@
     updateSidebarCount();
   }
 
-  // Keep widget alive — 500ms catches faster SPA re-renders
+  // Burst injection at startup so widget appears immediately when nav is ready,
+  // then keep it alive with an interval for SPA re-renders
+  injectSidebarWidget();
+  [50, 150, 350, 700, 1400, 2500].forEach(d => setTimeout(injectSidebarWidget, d));
   setInterval(injectSidebarWidget, 500);
 
   // ── Badge ──────────────────────────────────────────────────────────────────────
@@ -632,8 +635,12 @@
     pageFlags.clear();
     sessionCount = 0;
     updateSidebarCount();
-    // Cascade retries — Twitter SPA nav mounts at unpredictable times after navigation
-    [200, 600, 1200, 2500].forEach(delay => setTimeout(() => scan(document.body), delay));
+    // Re-inject widget immediately, then cascade scans as Twitter mounts React nav
+    injectSidebarWidget();
+    [0, 150, 400, 900, 1800, 3000].forEach(delay => setTimeout(() => {
+      injectSidebarWidget();
+      scan(document.body);
+    }, delay));
   }).observe(document, { subtree: true, childList: true });
 
   chrome.storage.onChanged.addListener(() => {

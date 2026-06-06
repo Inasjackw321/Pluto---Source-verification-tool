@@ -47,10 +47,10 @@
   }
 
   const CAT_SHORT = {
-    "state-propaganda": "State Prop.",
+    "state-propaganda": "State-Affiliated",
     "state-funded":     "State-Funded",
-    "misinformation":   "Unverified",
-    "conspiracy":       "Conspiracy",
+    "misinformation":   "Bad Source",
+    "conspiracy":       "Bad Source",
     "satire":           "Satire"
   };
 

@@ -3,7 +3,7 @@
 
 const PLUTO_CATEGORIES = {
   "state-propaganda": {
-    label: "State Propaganda",
+    label: "State-Affiliated",
     color: "#b45309",
     bgColor: "#fffbeb",
     borderColor: "#d97706",
@@ -12,7 +12,7 @@ const PLUTO_CATEGORIES = {
     textIcon: "★"
   },
   "state-funded": {
-    label: "State-Funded Media",
+    label: "State-Funded",
     color: "#92400e",
     bgColor: "#fef3c7",
     borderColor: "#b45309",
@@ -21,9 +21,10 @@ const PLUTO_CATEGORIES = {
     textIcon: "◉"
   },
   "misinformation": {
-    label: "Unverified Claims", hidden: true,
+    label: "Bad Source",
     color: "#991b1b", bgColor: "#fef2f2", borderColor: "#ef4444", dotColor: "#ef4444",
-    icon: ``, textIcon: "▲"
+    icon: `<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1L10.5 10H1.5L6 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/><line x1="6" y1="4.5" x2="6" y2="7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="6" cy="9" r="0.7" fill="currentColor"/></svg>`,
+    textIcon: "▲"
   },
   "conspiracy": {
     label: "Conspiracy / Fringe", hidden: true,
@@ -747,19 +748,19 @@ const PLUTO_ACCOUNTS = [
   // ═══ CONSPIRACY / FRINGE ══════════════════════════════════════════════════
 
   {
-    handle: "RealAlexJones", label: "Conspiracy / InfoWars", category: "conspiracy",
+    handle: "RealAlexJones", label: "Conspiracy / InfoWars", category: "misinformation",
     blocked: false, trust: 5,
     detail: "Alex Jones was found liable for defamation by US courts for spreading false claims about the Sandy Hook massacre. Regularly promotes conspiracy theories about conflicts and governments.",
     source: "US Federal Court – Jones v. Pozner (2022)"
   },
   {
-    handle: "NaturalNews", label: "Health / War Disinfo", category: "conspiracy",
+    handle: "NaturalNews", label: "Health / War Disinfo", category: "misinformation",
     blocked: false, trust: 4,
     detail: "Banned from Facebook, YouTube, and Pinterest for health misinformation. Also promotes conspiracy theories about geopolitical events.",
     source: "NewsGuard Red · CCDH report"
   },
   {
-    handle: "EpochTimes", label: "Influence Network", category: "conspiracy",
+    handle: "EpochTimes", label: "Influence Network", category: "misinformation",
     blocked: false, trust: 16,
     detail: "Linked to Falun Gong. Identified by EU DisinfoLab and Oxford Internet Institute as a coordinated inauthentic influence network. Rated Red by NewsGuard.",
     source: "EU DisinfoLab 2019 · Oxford Internet Institute · NewsGuard"
@@ -768,19 +769,19 @@ const PLUTO_ACCOUNTS = [
   // ═══ RUSSIAN / PRO-RUSSIA INFLUENCERS ════════════════════════════════════
 
   {
-    handle: "jacksonhinklle", label: "Pro-Russia Influencer", category: "conspiracy",
+    handle: "jacksonhinklle", label: "Pro-Russia Influencer", category: "misinformation",
     blocked: false, trust: 8,
     detail: "Consistently amplifies Russian state narratives on Ukraine, Gaza, and US politics. Content reposted by RT and Sputnik. Multiple posts labelled misleading by Community Notes.",
     source: "Community Notes · NewsGuard · Bellingcat 2023"
   },
   {
-    handle: "mylordbebo", label: "Pro-Russia Influencer", category: "conspiracy",
+    handle: "mylordbebo", label: "Pro-Russia Influencer", category: "misinformation",
     blocked: false, trust: 10,
     detail: "Lord Bebo amplifies Russian state media talking points on Ukraine, Gaza, and Western governments. Content routinely mirrors RT and Sputnik framing with no independent sourcing.",
     source: "Community Notes · EU DisinfoLab"
   },
   {
-    handle: "megatron_ron", label: "Pro-Russia Influencer", category: "conspiracy",
+    handle: "megatron_ron", label: "Pro-Russia Influencer", category: "misinformation",
     blocked: false, trust: 10,
     detail: "Megatron promotes pro-Russian narratives on Ukraine and the Middle East. Content cited by Russian state media. Posts labelled misleading by Community Notes.",
     source: "Community Notes · Bellingcat"
@@ -915,7 +916,7 @@ const PLUTO_ACCOUNTS = [
     source: "Washington Post investigation 2022 · CCDH report"
   },
   {
-    handle: "cobratate", label: "Conspiracy / Fringe", category: "conspiracy",
+    handle: "cobratate", label: "Conspiracy / Fringe", category: "misinformation",
     blocked: false, trust: 12,
     detail: "Andrew Tate spreads misogynistic narratives and conspiracy theories. Banned from YouTube, Facebook, Instagram, and TikTok. Posts frequently receive Community Notes corrections.",
     source: "Community Notes · CCDH report 2022"
@@ -948,7 +949,7 @@ const PLUTO_ACCOUNTS = [
     source: "EU DisinfoLab · Bellingcat media audit"
   },
   {
-    handle: "in2thinair", label: "Conspiracy / Fringe", category: "conspiracy",
+    handle: "in2thinair", label: "Conspiracy / Fringe", category: "misinformation",
     blocked: false, trust: 10,
     detail: "Posts conspiracy theories about governments, vaccines, the New World Order, and geopolitical events without credible sourcing.",
     source: "Community Notes (Twitter)"
@@ -966,7 +967,7 @@ const PLUTO_ACCOUNTS = [
     source: "Community Notes (Twitter)"
   },
   {
-    handle: "nyprepper1", label: "Conspiracy / Fringe", category: "conspiracy",
+    handle: "nyprepper1", label: "Conspiracy / Fringe", category: "misinformation",
     blocked: false, trust: 15,
     detail: "Posts prepper and conspiracy content including unverified claims about government crises, collapse scenarios, and false flag events.",
     source: "Community Notes (Twitter)"
